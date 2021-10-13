@@ -1,0 +1,12 @@
+{
+	"files.associations": {
+		"vector": "cpp",
+		"deque": "cpp",
+		"utility": "cpp",
+		"iterator": "cpp",
+		"__hash_table": "cpp",
+		"__split_buffer": "cpp",
+		"string": "cpp",
+		"type_traits": "cpp"
+	}
+}
