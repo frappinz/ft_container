@@ -47,11 +47,11 @@ namespace ft
 		/****************** MEMBER FUNCTIONS ******************/
 		explicit vector(const allocator_type& alloc = allocator_type())
 			:	_size(0),
-				_capacity(0),
-				_begin(nullptr),
+				_capacity(1),
 				_end(nullptr),
 				_alloc(alloc)
 		{
+				_begin = _alloc.allocate(1);
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _size(n), _alloc(alloc)
 		{	
@@ -97,6 +97,7 @@ namespace ft
 
 
 		/***** CAPACITY *****/	
+		const_reference operator[]( size_type pos ) const { return (this->_begin[pos]); }
 		size_t size() { return (_size); }
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void resize (size_type n, value_type val = value_type()) //da rivedere quando facciamo append
@@ -131,7 +132,6 @@ namespace ft
 
 		/***** ELEMENT ACCESS ****/
 		reference operator[]( size_type pos )  { return (this->_begin[pos]); }
-		const_reference operator[]( size_type pos ) const { return (this->_begin[pos]); }
       	reference at (size_type n){}
 		const_reference at (size_type n) const{}		
 
@@ -140,6 +140,28 @@ namespace ft
 
 		/***** 	MODIFIERS ****/
 		void clear(){this->_size = 0;}
+
+		/////////////PASQUALE//////////////////
+
+		void push_back (const value_type& val)
+		{
+			size_t peppolone = _capacity;
+			if(_capacity -1 == _size)
+				_capacity = _capacity*2;
+			
+			_size = _size + 1;
+			pointer tmp;
+
+			tmp = _alloc.allocate(_capacity);
+			for(int i =0; i < _size; i++)
+			{
+				tmp[i] = _begin[i]; 
+			}
+			tmp[_size] = val;
+			_alloc.deallocate(_begin, peppolone);
+			_begin = tmp;
+			
+		}
 
 
 		//template <class _Tp, class _Allocator>
