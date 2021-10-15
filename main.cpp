@@ -5,41 +5,39 @@
 
 int main()
 {
-	ft::vector<int> ciccio;
-	std::vector<int> gamer;
+	ft::vector<int> ciccio(3, 4);
+	std::vector<int> gamer (3, 4);
 
-	// std::cout << "Max size nostro: " << ciccio.max_size() << std::endl;
-	// std::cout << "Max size origin: " << gamer.max_size() << std::endl;
+	std::cout << "ft::max_size  " << ciccio.max_size() << std::endl;
+	std::cout << "std::max_size  " << gamer.max_size() << std::endl;
 
-	std::cout << "ft: " << ciccio.capacity() << std::endl;
-	std::cout << "gamer: " << gamer.capacity() << std::endl;
+	gamer.push_back(0);
+	gamer.push_back(2);
+	gamer.push_back(3);
+	gamer.push_back(4);
 
-	gamer.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	ciccio.push_back(1);
-	
+	ciccio.push_back(0);
+	ciccio.push_back(2);
+	ciccio.push_back(3);
+	ciccio.push_back(4);
 
-	for (int i = 0; i < 10; i++)
+
+	std::cout << "std::size: " << gamer.size() << std::endl;
+	std::cout << "ft::size: " << ciccio.size() << std::endl;
+
+	std::cout << "std::at -> " << gamer.at(6) << std::endl;
+	std::cout << "ft::at -> " << ciccio.at(6) << std::endl;
+
+	std::cout << "std::front: " << gamer.front() << std::endl;
+	std::cout << "ft::front: " << ciccio.front() << std::endl;
+
+
+
+
+
+	for (int i = 0; i < ciccio.size(); i++)
 		std::cout << "originale " << gamer[i] << " - " << ciccio[i] << " nostro" << std::endl;
 	
-	std::cout<<gamer.size();
-	std::cout<<ciccio.size();
 	
 	
 	
