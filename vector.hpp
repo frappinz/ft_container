@@ -21,7 +21,7 @@
 #include <stdexcept>
 
   
-
+//ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
 
 
 namespace ft 
