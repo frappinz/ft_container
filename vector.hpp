@@ -58,7 +58,7 @@ namespace ft
 				_capacity(0),
 				_end(nullptr),
 				_alloc(alloc)
-		{ //cambiata l'allocazione di uno a buffo
+		{ //cambiata l'allocazione di uno a buffo//// me l'aveva detta peppo
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _size(n), _alloc(alloc)
 		{	
@@ -156,7 +156,7 @@ namespace ft
 		/***** 	MODIFIERS ****/
 		void clear(){this->_size = 0;}
 
-		void push_back (const value_type& val) 										//modificata questa
+		void push_back (const value_type& val) 										//modificata questa///vabbè dove l'hai rubata è troppo intelligente per te
 		{
 			_size++;
 			if (_size > _capacity)
