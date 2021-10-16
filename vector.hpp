@@ -44,7 +44,7 @@ namespace ft
 		typedef typename allocator_type::difference_type 	difference_type;
 		//typedef std::reverse_iterator<iterator>         	reverse_iterator;
 
-		class out_of_range : public std::exception 														//creato error (funzione at)
+		class out_of_range : public std::exception
 		{
 			public:
 				const char * what () const throw () { return ("out_of_range"); }
@@ -58,7 +58,7 @@ namespace ft
 				_capacity(0),
 				_end(nullptr),
 				_alloc(alloc)
-		{ //cambiata l'allocazione di uno a buffo//// me l'aveva detta peppo
+		{
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _size(n), _alloc(alloc)
 		{	
@@ -74,10 +74,10 @@ namespace ft
 		// {
 
 		// }
-		vector (const vector& x){}
+		vector (const vector& x){ *this = x; }
 		~vector()
 		{
-			if (_begin != nullptr)
+			if (_begin != nullptr && *_begin != 0)
 				this->_alloc.deallocate(_begin, _capacity);
 		}
 
@@ -91,6 +91,7 @@ namespace ft
 		}
 
 		/***** ITERATOR *****/
+
 		// iterator begin() {};
 		// const_iterator begin() const {};
 		// iterator end(){}
@@ -102,7 +103,7 @@ namespace ft
 
 
 		/***** CAPACITY *****/	
-		size_t size() { return (_size); }
+		size_t size() const { return (_size); }
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void resize (size_type n, value_type val = value_type()) //da rivedere quando facciamo append
 		{
@@ -115,11 +116,11 @@ namespace ft
 			}
 			_size = n;
 		}
-		size_t capacity() { return (_capacity); }
+		size_t capacity() const { return (_capacity); }
 		bool empty() const { return(_capacity == 0); }
 		void reserve( size_type n )
 		{
-			if (n > _capacity && _begin!= nullptr) 									//aggiunta la seconda condizione
+			if (n > _capacity && _begin!= nullptr)
 			{
 				pointer tmp;
 				tmp = _begin;
@@ -130,7 +131,7 @@ namespace ft
 				for(size_t i = 0; i < _size; i++)
 					_begin[i] = tmp[i];
 			}
-			else																	//e questo
+			else
 				_begin = _alloc.allocate(n);
 
 		}
@@ -139,7 +140,7 @@ namespace ft
 		/***** ELEMENT ACCESS ****/
 		reference operator[]( size_type pos )  { return (this->_begin[pos]); }
 		const_reference operator[]( size_type pos ) const { return (this->_begin[pos]); }
-      	reference at (size_type n){														//fatti questi tre
+      	reference at (size_type n){
 			if(n >= _size)
 				throw(out_of_range());
 			return (_begin[n]);
@@ -150,75 +151,126 @@ namespace ft
 			return (_begin[n]);
 		}
 		reference front(){ return _begin[0]; }
-		const_reference front() const{ return _begin[0]; }
+		const_reference front() const { return _begin[0]; }
+		reference back(){ return _begin[_size - 1]; }
+		const_reference back() const { return _begin[_size - 1]; }
 
 
 		/***** 	MODIFIERS ****/
-		void clear(){this->_size = 0;}
 
-		void push_back (const value_type& val) 										//modificata questa///vabbè dove l'hai rubata è troppo intelligente per te
+		// void assign (InputIterator first, InputIterator last)
+		// {
+
+		// }
+		void assign (size_type n, const value_type& val)
+		{
+			if (n > _capacity)
+				reserve(n * 2);
+			_size = n;
+			for (size_t i = 0; i < _size; i++)
+				_begin[i] = val;
+		}
+		void push_back (const value_type& val)
 		{
 			_size++;
 			if (_size > _capacity)
 				reserve(_size * 2);
 			_begin[_size - 1] = val;
-
-			// size_t peppolonetiamoseilamiavita = _capacity;
-			// if(_capacity -1 == _size)
-			// 	_capacity = _capacity*2;
-			
-			// _size = _size + 1;
-			// pointer tmp;
-
-			// tmp = _alloc.allocate(_capacity);
-			// for(int i =0; i < _size; i++)
-			// {
-			// 	tmp[i] = _begin[i]; 
-			// }
-			// tmp[_size] = val;
-			// _alloc.deallocate(_begin, peppolone);
-			// _begin = tmp;
 		}
+		void pop_back(){ _size--; }
 
+		// iterator insert (iterator position, const value_type& val);
+		// void insert (iterator position, size_type n, const value_type& val);
+		// template <class InputIterator>
+    	// 	void insert (iterator position, InputIterator first, InputIterator last);
+		// iterator erase (iterator position);
+		// iterator erase (iterator first, iterator last);
 
-		//template <class _Tp, class _Allocator>
-		// void vector<_Tp, _Allocator>::reserve(size_type __n)
-		// {
-		// 	if (__n > capacity())
-		// 	{
-		// 		allocator_type& __a = this->__alloc();
-		// 		__split_buffer<value_type, allocator_type&> __v(__n, size(), __a);
-		// 		__swap_out_circular_buffer(__v);
-		// 	}
-		// }
-		// {
-	
-		// 	//If new_cap is greater than capacity(), all iterators, including the past-the-end iterator, 
-		// 	//and all references to the elements are invalidated. Otherwise, no iterators or references are invalidated.
-		// }
-		
+		void swap (vector& x){
+			ft::vector<T> tmp;
+			tmp._begin = this->_begin;
+			tmp._alloc = this->_alloc;
+			tmp._size = this->_size;
+			tmp._capacity = this->_capacity;
+			this->_begin = x._begin;
+			this->_alloc = x._alloc;
+			this->_size = x._size;
+			this->_capacity = x._capacity;
+			x._begin = tmp._begin;
+			x._alloc = tmp._alloc;
+			x._size = tmp._size;
+			x._capacity = tmp._capacity;
+		}
+		void clear(){this->_size = 0;}
 
+		allocator_type get_allocator() const { return this->_alloc; }
 	private:
 		size_t _size;
 		size_t _capacity;
 		pointer _begin;
 		pointer _end;
 		Allocator _alloc;
+  	};
+	
+	
+	template <class T, class Alloc> void swap (vector<T,Alloc>& x, vector<T,Alloc>& y){ x.swap(y); }
+	
 
-	};
+	/************* OPERATOR OVERLOAD ************/
 
+	template <class T, class Alloc>
+		bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
+			if (lhs.size() == rhs.size())
+			{
+				for (size_t i = 0; i < lhs.size(); i++)
+				{
+					if (lhs.at(i) != rhs.at(i))
+						return (false);
+				}
+				return (true);
+			}
+			return (false);
+		}
 
+	template <class T, class Alloc>
+		bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs){ return (!(lhs == rhs)); }
+
+	template <class T, class Alloc>
+		bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() < rhs.size())
+			return true;
+		if (lhs.size() > rhs.size())
+			return false;
+		
+		for (size_t i = 0; i < lhs.size(); i++)
+		{
+			if (lhs.at(i) >= rhs.at(i))
+				return (false);
+		}
+		return (true);
+	}
+
+	template <class T, class Alloc>
+		bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		if (lhs.size() > rhs.size())
+			return false;
+		for (size_t i = 0; i < lhs.size(); i++)
+		{
+			if (lhs.at(i) > rhs.at(i))
+				return (false);
+		}
+		return (true);
+	}
+		
+	template <class T, class Alloc>
+		bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs <= rhs)); }
+		
+	template <class T, class Alloc>
+		bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs < rhs)); }
+		
 } // namespace ft
-
-
-
-
-
-
-
-
-
-
 
 
 #endif
