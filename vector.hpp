@@ -19,6 +19,7 @@
 #include <iterator>
 #include <vector>
 #include <stdexcept>
+#include "iterator.hpp"
 
   
 //ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
@@ -105,11 +106,11 @@ namespace ft
 		typedef typename allocator_type::pointer         	pointer;
 		typedef typename allocator_type::const_pointer  	const_pointer;
 		typedef typename allocator_type::size_type       	size_type;
-		//typedef vector_iterator<pointer>					iterator;
-		//typedef vector_iterator <const_pointer>				const_iterator;
-		//typedef std::reverse_iterator<iterator>    			const_reverse_iterator;
+		typedef ft::base_iterator<pointer>					iterator;
+		typedef ft::base_iterator<const_pointer>			const_iterator;
+		typedef ft::reverse_iterator<iterator>    			const_reverse_iterator;
 		typedef typename allocator_type::difference_type 	difference_type;
-		//typedef std::reverse_iterator<iterator>         	reverse_iterator;
+		typedef ft::reverse_iterator<iterator>         		reverse_iterator;
 
 		class out_of_range : public std::exception
 		{
@@ -159,14 +160,18 @@ namespace ft
 
 		/***** ITERATOR *****/
 
-		// iterator begin() {};
-		// const_iterator begin() const {};
-		// iterator end(){}
-		// const_iterator end() const{}
-		// reverse_iterator rbegin() {}
-		// const_reverse_iterator rbegin() const {}
-		// reverse_iterator rend() {}
-		// const_reverse_iterator rend() const {}
+		iterator begin() {
+			return iterator(_begin + 1); //da controllare sta roba che é una cafonata
+		}
+		const_iterator begin() const {};
+		iterator end(){
+			return iterator(_begin + _size + 1); // e pure questa
+		}
+		const_iterator end() const{}
+		reverse_iterator rbegin() {}
+		const_reverse_iterator rbegin() const {}
+		reverse_iterator rend() {}
+		const_reverse_iterator rend() const {}
 
 
 		/***** CAPACITY *****/	
@@ -187,7 +192,10 @@ namespace ft
 					_begin[i] = tmp[i];
 			}
 			else
+			{
 				_begin = _alloc.allocate(n);
+				_capacity = n;
+			}
 
 		}
 		size_t capacity() const { return (_capacity); }
@@ -234,7 +242,7 @@ namespace ft
 			_begin[_size - 1] = val;
 		}
 		void pop_back(){ _size--; }
-		void resize (size_type n, value_type val = value_type()) //da rivedere quando facciamo append
+		void resize (size_type n, value_type val = value_type())
 		{
 			if (n >= _size)
 			{
