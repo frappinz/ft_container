@@ -23,6 +23,73 @@
   
 //ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
 
+ /*.,,-~&,               ,~"~.
+ { /`,__\`.             > ::::
+{ `}'~.~/\ \           <, ?::;
+{`}'\._/  ) }           l_  f
+ ,__/ l_,'`/          ,__}--{_.
+{  `.__.' (          /         }
+ \ \    )  )        /          !
+  \'\`-'`-'        /  ,    1  J;
+   \ \___l,-_,___.'  /1    !  Y
+    k____-~'-l_____.' |    l /
+   /===#=l            l     f
+  f      8            I===I=I
+  t    ! 8            f     }
+   Y    \l            |     }
+    \    \            l    Y;
+     `.   \           }    |
+      !`,  \          |    |
+      l /   }        ,1    |
+      l/   /         !l   ,l
+      /  ,'          ! \    \
+     /  /!           !  \    \
+    /_,f_l           l___j.   \
+   (_ \l_ `_     ,.-'`--(  `.,'`.
+    Y\__Y`--'    `-'~x__J    j'  >
+                           ,/ ,^'
+                          f__J
+						  
+						        ,;;;;;,
+       ,;;;;;;;;,
+       ;;;'____ ;
+       ;;;(\\\\\;
+       `/'((|||||
+    ___<  C))||||
+  ,'    \__(((||),
+  |    \  _)))))))\,_
+ /|    |/"\`\`""""' |)
+;  \    \  ) \_____/_|
+|  |\    \'    _.,-' |
+|  ' \    \.,-'   _./ |
+(  _,-\      _.-''  |  ;
+ "'|___\__.-'       ;  )
+    |----|   _.--,;'   ;
+   ,'  , | (     __.,-'
+   | ,' ,'  `""''   `.
+   |    ;            )
+   `,   (            )
+    |   (           ,'
+    |   |           (
+    |   |           |
+    |   |           |
+    |   |___________|
+    |   |      |    |
+	
+	         .,,,,,,,,,,.
+         ,;;;;;;;;;;;;;;,
+       ,;;;;;;;;;;;)));;(((,,;;;,,_
+      ,;;;;;;;;;;'      |)))))))))))\\
+      ;;;;;;/ )''    - /,)))((((((((((\
+      ;;;;' \        ~|\  ))))))))))))))
+      /     /         |   ((((((((((((((
+    /'      \      _/~'    ')|()))))))))
+  /'         `\   />     o_/)))((((((((
+ /          /' `~~(____ /  ()))))))))))
+|     ---,   \        \     ((((((((((
+          `\   \~-_____|      ))))))))
+            `\  |      |_.---.  \*/
+
 
 namespace ft 
 {
@@ -103,21 +170,9 @@ namespace ft
 
 
 		/***** CAPACITY *****/	
+		bool empty() const { return(_capacity == 0); }
 		size_t size() const { return (_size); }
 		size_type max_size() const { return ( _alloc.max_size()); }
-		void resize (size_type n, value_type val = value_type()) //da rivedere quando facciamo append
-		{
-			if (n >= _size)
-			{
-				if (!val)
-					val = 0;
-				for (size_t i = _size; i < n; i++)
-					_begin[i] = val;
-			}
-			_size = n;
-		}
-		size_t capacity() const { return (_capacity); }
-		bool empty() const { return(_capacity == 0); }
 		void reserve( size_type n )
 		{
 			if (n > _capacity && _begin!= nullptr)
@@ -135,6 +190,7 @@ namespace ft
 				_begin = _alloc.allocate(n);
 
 		}
+		size_t capacity() const { return (_capacity); }
 
 
 		/***** ELEMENT ACCESS ****/
@@ -178,6 +234,17 @@ namespace ft
 			_begin[_size - 1] = val;
 		}
 		void pop_back(){ _size--; }
+		void resize (size_type n, value_type val = value_type()) //da rivedere quando facciamo append
+		{
+			if (n >= _size)
+			{
+				if (!val)
+					val = 0;
+				for (size_t i = _size; i < n; i++)
+					_begin[i] = val;
+			}
+			_size = n;
+		}
 
 		// iterator insert (iterator position, const value_type& val);
 		// void insert (iterator position, size_type n, const value_type& val);

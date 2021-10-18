@@ -5,7 +5,7 @@
 
 int main()
 {
-	ft::vector<int> ciccio(10, 6);
+	ft::vector<int> ciccio;
 	ft::vector<int> ci(10, 5);
 
 	std::vector<int> gamer (10, 6);
@@ -20,16 +20,18 @@ int main()
 	// gamer.push_back(0);
 	// gamer.push_back(0);
 
-	// ciccio.push_back(0);
-	// ciccio.push_back(0);
-	// ciccio.push_back(0);
-	// ciccio.push_back(0);
+	ciccio.push_back(1);
+	ciccio.push_back(0);
+	ciccio.push_back(0);
+	ciccio.push_back(0);
 
-	if (gamer != sds) std::cout << "sono uguali\n";
-	if (ciccio != ci) std::cout << "sono diversi\n";
+	gamer.data()
 
-	if (gamer <= sds) std::cout << "gamer minore uguale\n";
-	if (ciccio <= ci) std::cout << "ciccio minore uguale\n";
+	// if (gamer != sds) std::cout << "sono uguali\n";
+	// if (ciccio != ci) std::cout << "sono diversi\n";
+
+	// if (gamer <= sds) std::cout << "gamer minore uguale\n";
+	// if (ciccio <= ci) std::cout << "ciccio minore uguale\n";
 
 	
 
@@ -54,7 +56,7 @@ int main()
 
 
 
-	for (int i = 0; i < gamer.size(); i++)
+	for (int i = 0; i < ciccio.size(); i++)
 		std::cout << "originale " << gamer[i] << " - " << ciccio[i] << " nostro" << std::endl;
 	
 	
