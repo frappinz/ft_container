@@ -5,10 +5,21 @@
 
 int main()
 {
-	ft::vector<int> ciccio;
+	int ints[] = {10, 20, 30, 40};
+
+
+
+	ft::vector<int> ciccio1(10, 2);
+	ft::vector<int> ciccio2(ft::vector<int>::iterator(ints), ft::vector<int>::iterator(ints+4));
+
+
+
+	ciccio1.assign(ints + 1, ints + 4);
 	//ft::vector<int> ci(10, 5);
 
-	std::vector<int> gamer;
+
+	std::vector<int> gamer(10, 2);
+	gamer.assign(ints + 1, ints+4);
 	//std::vector<int> sds (10, 5);
 
 
@@ -16,15 +27,15 @@ int main()
 	// std::cout << "ft::max_size  " << ciccio.max_size() << std::endl;
 	// std::cout << "std::max_size  " << gamer.max_size() << std::endl;
 
-	gamer.push_back(1);
-	gamer.push_back(2);
-	gamer.push_back(3);
-	gamer.push_back(4);
+	// gamer.push_back(1);
+	// gamer.push_back(2);
+	// gamer.push_back(3);
+	// gamer.push_back(4);
 
-	ciccio.push_back(1);
-	ciccio.push_back(2);
-	ciccio.push_back(3);
-	ciccio.push_back(4);
+	// ciccio.push_back(1);
+	// ciccio.push_back(2);
+	// ciccio.push_back(3);
+	// ciccio.push_back(4);
 
 
 	// if (gamer != sds) std::cout << "sono uguali\n";
@@ -55,12 +66,29 @@ int main()
 	// ciccio.swap(ci);
 
 
+	// std::vector<int>::iterator x = gamer.begin();
+	// std::vector<int>::iterator j = gamer.end();
 
-	for (ft::vector<int>::iterator it2 = ciccio.begin(); it2 != ciccio.end(); it2++)
-		std::cout << *it2 << " nostro" << std::endl;
+	// ft::vector<int>::iterator i = ciccio.begin();
+	// ft::vector<int>::iterator y = ciccio.end();
 
-	for (std::vector<int>::iterator it = gamer.begin(); it != gamer.end(); it++)
-		std::cout << *it << " originale" << std::endl;
+	// ft::vector<int>::iterator i2 = y - 2;
+	// 	std::cout << *i2 <<std::endl;
+	// std::vector<int>::iterator i3 = j - 2;
+	// 	std::cout << *i3 << std::endl;
+
+	
+
+	
+
+	for (ft::vector<int>::iterator i = ciccio1.begin(); i != ciccio1.end(); i++)
+		std::cout << *i << " nostro" << std::endl;
+
+	for (std::vector<int>::iterator i = gamer.begin(); i != gamer.end(); i++)
+		std::cout << *i << " originale" << std::endl;
+	
+	// if (i == y)
+	// 	std::cout << "minchia\n";
 
 
 //		std::cout << "originale " << gamer[i] << " - " << ciccio[i] << " nostro" << std::endl;

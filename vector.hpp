@@ -118,17 +118,20 @@ namespace ft
 				const char * what () const throw () { return ("out_of_range"); }
 		};
 
-		/****************** MEMBER FUNCTIONS ******************/
+		/******************************** COSTRUCTORS ********************************/
 
 		explicit vector(const allocator_type& alloc = allocator_type())
 			:	_size(0),
 				_begin(nullptr),
 				_capacity(0),
-				_end(nullptr),
 				_alloc(alloc)
 		{
 		}
-		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()): _size(n), _alloc(alloc)
+		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) 
+			:	_size(n),
+				_begin(nullptr),
+				_capacity(0),
+				_alloc(alloc)
 		{	
 			if (n > 0)
 			{
@@ -138,18 +141,30 @@ namespace ft
 					_begin[i] = val;
 			}
 		}
-		// template <class InputIterator> vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
-		// {
-
-		// }
+		template <class InputIterator> 
+			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _size(0), _begin(nullptr), _capacity(0), _alloc(alloc)
+		{
+			pointer tmp;
+			tmp = first;
+			while (tmp != last)
+			{
+				tmp++;
+				_size++;
+			}
+			_capacity = _size *2;
+			_begin = _alloc.allocate(_capacity);
+			for (int i = 0; i < _size; i++)
+				_begin[i] = first[i];				//va bene per ora hai vinto tu😡
+		
+		}
 		vector (const vector& x){ *this = x; }
 		~vector()
 		{
-			if (_begin != nullptr && *_begin != 0)
-				this->_alloc.deallocate(_begin, _capacity);
+			if (this->_begin != nullptr && *_begin != 0)
+				this->_alloc.deallocate(this->_begin, this->_capacity);
 		}
 
-		vector& operator=( const vector& other ){ 
+		vector& operator=( const vector& other ) { 
 			_begin = other._begin;
 			_alloc = other._alloc;
 			_end = other._end;
@@ -161,11 +176,11 @@ namespace ft
 		/***** ITERATOR *****/
 
 		iterator begin() {
-			return iterator(_begin + 1); //da controllare sta roba che é una cafonata
+			return iterator(_begin);
 		}
 		const_iterator begin() const {};
 		iterator end(){
-			return iterator(_begin + _size + 1); // e pure questa
+			return iterator(_begin + _size);
 		}
 		const_iterator end() const{}
 		reverse_iterator rbegin() {}
@@ -222,10 +237,24 @@ namespace ft
 
 		/***** 	MODIFIERS ****/
 
-		// void assign (InputIterator first, InputIterator last)
-		// {
-
-		// }
+		template <class InputIterator>
+			void assign (InputIterator first, InputIterator last)
+		{
+			pointer tmp;
+			tmp = first;
+			while (tmp != last)
+			{
+				tmp++;
+				_size++;
+			}
+			if (_begin != nullptr && _capacity != 0)
+				this->_alloc.deallocate(this->_begin, this->_capacity);
+			_capacity = _size *2;
+			_begin = _alloc.allocate(_capacity);
+			for (int i = 0; i < _size; i++)
+				_begin[i] = first[i];				//va bene per ora hai vinto tu😡
+		
+		}
 		void assign (size_type n, const value_type& val)
 		{
 			if (n > _capacity)
