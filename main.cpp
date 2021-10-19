@@ -9,19 +9,28 @@ int main()
 
 
 
-	ft::vector<int> ciccio1(10, 2);
-	ft::vector<int> ciccio2(ft::vector<int>::iterator(ints), ft::vector<int>::iterator(ints+4));
-
-
-
-	ciccio1.assign(ints + 1, ints + 4);
+	ft::vector<int> ciccio (ints, ints+4);
+	//ciccio.assign(ints, ints + 4);
 	//ft::vector<int> ci(10, 5);
 
 
-	std::vector<int> gamer(10, 2);
-	gamer.assign(ints + 1, ints+4);
+	std::vector<int> gamer (ints, ints + 4);
+	//gamer.assign(ints, ints + 4);
+
+	std::vector<int>::iterator it = gamer.begin();
+	gamer.insert((it+1), 0);
+	std::cout << "iter originale punta a " << *it << std::endl; 
+	ft::vector<int>::iterator it2 = ciccio.begin();
+	ciccio.insert((it2 + 1), 0);
+	std::cout << "iter nostro punta a " << *it2 << std::endl; 
+
+
+
+
 	//std::vector<int> sds (10, 5);
 
+	for (std::vector<int>::iterator i = gamer.begin(); i != gamer.end(); i++)
+		std::cout << *i << " originale" << std::endl;
 
 
 	// std::cout << "ft::max_size  " << ciccio.max_size() << std::endl;
@@ -50,14 +59,14 @@ int main()
 	// std::cout << "std::size [" << gamer.size() << "]" << std::endl;
 	// std::cout << "ft::size [" << ciccio.size() << "]" << std::endl;
 
-	// std::cout << "std::at [" << gamer.at(6) << "]" << std::endl;
-	// std::cout << "ft::at [" << ciccio.at(6) << "]" << std::endl;
+	// // std::cout << "std::at [" << gamer.at(6) << "]" << std::endl;
+	// // std::cout << "ft::at [" << ciccio.at(6) << "]" << std::endl;
 
-	// std::cout << "std::front [" << gamer.front() << "]" << std::endl;
-	// std::cout << "ft::front [" << ciccio.front() << "]" << std::endl;
+	// // std::cout << "std::front [" << gamer.front() << "]" << std::endl;
+	// // std::cout << "ft::front [" << ciccio.front() << "]" << std::endl;
 
-	// std::cout << "std::back [" << gamer.back() << "]" << std::endl;
-	// std::cout << "ft::back [" << ciccio.back() << "]" << std::endl;
+	// // std::cout << "std::back [" << gamer.back() << "]" << std::endl;
+	// // std::cout << "ft::back [" << ciccio.back() << "]" << std::endl;
 
 	// std::cout << "std::capacity [" << gamer.capacity() << "]" << std::endl;
 	// std::cout << "ft::capacity [" << ciccio.capacity() << "]" << std::endl;
@@ -81,11 +90,9 @@ int main()
 
 	
 
-	for (ft::vector<int>::iterator i = ciccio1.begin(); i != ciccio1.end(); i++)
+	for (ft::vector<int>::iterator i = ciccio.begin(); i != ciccio.end(); i++)
 		std::cout << *i << " nostro" << std::endl;
 
-	for (std::vector<int>::iterator i = gamer.begin(); i != gamer.end(); i++)
-		std::cout << *i << " originale" << std::endl;
 	
 	// if (i == y)
 	// 	std::cout << "minchia\n";

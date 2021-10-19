@@ -142,7 +142,12 @@ namespace ft
 			}
 		}
 		template <class InputIterator> 
-			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _size(0), _begin(nullptr), _capacity(0), _alloc(alloc)
+			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), 
+					typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
+				: 	_size(0), 
+					_begin(nullptr), 
+					_capacity(0), 
+					_alloc(alloc)
 		{
 			pointer tmp;
 			tmp = first;
@@ -173,23 +178,20 @@ namespace ft
 			return(*this);
 		}
 
-		/***** ITERATOR *****/
+		/********************************      ITERATOR     ********************************/
 
-		iterator begin() {
-			return iterator(_begin);
-		}
-		const_iterator begin() const {};
-		iterator end(){
-			return iterator(_begin + _size);
-		}
-		const_iterator end() const{}
-		reverse_iterator rbegin() {}
-		const_reverse_iterator rbegin() const {}
-		reverse_iterator rend() {}
-		const_reverse_iterator rend() const {}
+		iterator begin() { return iterator(_begin); }
+		const_iterator begin() const { return const_iterator(_begin); };
+		iterator end(){ return iterator(_begin + _size); }
+		const_iterator end() const { return const_iterator(_begin + _size); }
+		reverse_iterator rbegin() { return reverse_iterator(_begin + _size); }
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(_begin + _size); } 			// da controllare tutti e 4 i reverse
+		reverse_iterator rend() { return reverse_iterator(_begin); }
+		const_reverse_iterator rend() const { return const_reverse_iterator(_begin); }
 
 
-		/***** CAPACITY *****/	
+		/********************************      CAPACITY     ********************************/
+
 		bool empty() const { return(_capacity == 0); }
 		size_t size() const { return (_size); }
 		size_type max_size() const { return ( _alloc.max_size()); }
@@ -216,7 +218,8 @@ namespace ft
 		size_t capacity() const { return (_capacity); }
 
 
-		/***** ELEMENT ACCESS ****/
+		/********************************   ELEMENT ACCESS   ********************************/
+
 		reference operator[]( size_type pos )  { return (this->_begin[pos]); }
 		const_reference operator[]( size_type pos ) const { return (this->_begin[pos]); }
       	reference at (size_type n){
@@ -235,11 +238,12 @@ namespace ft
 		const_reference back() const { return _begin[_size - 1]; }
 
 
-		/***** 	MODIFIERS ****/
+		/********************************   	MODIFIERS     ********************************/
 
 		template <class InputIterator>
 			void assign (InputIterator first, InputIterator last)
 		{
+			_size = 0;
 			pointer tmp;
 			tmp = first;
 			while (tmp != last)
@@ -252,7 +256,7 @@ namespace ft
 			_capacity = _size *2;
 			_begin = _alloc.allocate(_capacity);
 			for (int i = 0; i < _size; i++)
-				_begin[i] = first[i];				//va bene per ora hai vinto tu😡
+				_begin[i] = first[i];								//va bene per ora hai vinto tu😡
 		
 		}
 		void assign (size_type n, const value_type& val)
@@ -283,12 +287,32 @@ namespace ft
 			_size = n;
 		}
 
-		// iterator insert (iterator position, const value_type& val);
-		// void insert (iterator position, size_type n, const value_type& val);
-		// template <class InputIterator>
-    	// 	void insert (iterator position, InputIterator first, InputIterator last);
-		// iterator erase (iterator position);
-		// iterator erase (iterator first, iterator last);
+		iterator insert (iterator position, const value_type& val)				//tutta da rifare, sto smadonnando
+		{
+			_size++;
+			if (_size > _capacity)
+			 	reserve(_size*2);
+			iterator i = (iterator)_begin;
+			int pos = 0;
+			while (i != position)
+				pos++;
+			int iter = _size;
+			while (iter != pos)
+			{
+				_begin[iter] = _begin[iter - 1];
+				iter--;
+			}
+			_begin[pos] = val;
+			std::cout << "position " << *position << std::endl;
+			position++;
+			return (position);
+		}
+		
+		void insert (iterator position, size_type n, const value_type& val);
+		template <class InputIterator>
+    		void insert (iterator position, InputIterator first, InputIterator last);
+		iterator erase (iterator position);
+		iterator erase (iterator first, iterator last);
 
 		void swap (vector& x){
 			ft::vector<T> tmp;
@@ -320,7 +344,7 @@ namespace ft
 	template <class T, class Alloc> void swap (vector<T,Alloc>& x, vector<T,Alloc>& y){ x.swap(y); }
 	
 
-	/************* OPERATOR OVERLOAD ************/
+	/********************************  OPERATOR OVERLOAD  ********************************/
 
 	template <class T, class Alloc>
 		bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
