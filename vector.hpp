@@ -139,6 +139,7 @@ namespace ft
 				_begin = _alloc.allocate(_capacity);
 				for(size_t i = 0; i < n; i++)
 					_begin[i] = val;
+				std::cout << "SONO NEL COSTRUTTORE BEGIN É " << *_begin << std::endl;
 			}
 		}
 		template <class InputIterator> 
@@ -294,8 +295,13 @@ namespace ft
 			 	reserve(_size*2);
 			iterator i = (iterator)_begin;
 			int pos = 0;
-			while (i != position)
+			while (i < position)
+			{
+				std::cout << "i punta a " << *i << "\nposition punta a " << *position << std::endl;
 				pos++;
+				i++;
+			}
+			std::cout << _begin[pos] <<  "<- porcodio\n";
 			int iter = _size;
 			while (iter != pos)
 			{
@@ -303,14 +309,48 @@ namespace ft
 				iter--;
 			}
 			_begin[pos] = val;
-			std::cout << "position " << *position << std::endl;
-			position++;
 			return (position);
 		}
 		
-		void insert (iterator position, size_type n, const value_type& val);
+		void insert (iterator position, size_type n, const value_type& val)
+		{
+			_size = _size + n;
+			if (_size > _capacity)
+			 	reserve(_size*2);
+				 
+				 
+			iterator i = (iterator)_begin;
+			int pos = 0;
+			while (i < position)
+			{
+				pos++;
+				i++;
+			}
+			int iter = _size;
+			while (iter != pos)
+			{
+				_begin[iter] = _begin[iter - n];
+				iter--;
+			}
+			int j = 0;
+			while (j < n)
+			{
+				_begin[pos] = val;
+				std::cout << "_begin[pos] = " << _begin[pos] << std::endl;
+				pos++;
+				j++;
+			}
+		}
+
+
 		template <class InputIterator>
-    		void insert (iterator position, InputIterator first, InputIterator last);
+    		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0);
+		// {
+
+		// }
+
+
+
 		iterator erase (iterator position);
 		iterator erase (iterator first, iterator last);
 
