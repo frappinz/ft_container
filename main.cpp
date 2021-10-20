@@ -9,23 +9,27 @@ int main()
 
 
 
-	ft::vector<int> ciccio (4,4);
+	ft::vector<int> ciccio (ints, ints + 4);
 	//ciccio.assign(ints, ints + 4);
 	//ft::vector<int> ci(10, 5);
 
 
-	// std::vector<int> gamer (8, 3);
+	std::vector<int> gamer (ints, ints + 4);
 	//gamer.assign(ints, ints + 4);
 
-	//std::vector<int>::iterator it = (gamer.begin());
-	//it = gamer.insert(it + 100, 3);
-	//gamer.insert(it, ints, ints+4);
+	std::vector<int>::iterator it = (gamer.end());
+	// gamer.insert(it - 2, ints, ints+4);
 	//gamer.insert(it, 3, 100);
 
-
+	it = gamer.erase(it - 2, it);
+	std::cout << "gamer punta " << *it << std::endl;
+	
 	ft::vector<int>::iterator it2 = ciccio.end();
+	it2 = ciccio.erase(it2 -2, it2);
+	std::cout << "ciccio punta " << *it2 << std::endl;
+
 	//ciccio.insert(it2, 3, 100);
-	it2 = ciccio.insert(it2, 0);
+	// ciccio.insert(it2 - 2, ints, ints+4);
 
 
 
@@ -33,8 +37,8 @@ int main()
 
 	//std::vector<int> sds (10, 5);
 
-	// for (std::vector<int>::iterator i = gamer.begin(); i != gamer.end(); i++)
-	// 	std::cout << *i << " originale" << std::endl;
+	for (std::vector<int>::iterator i = gamer.begin(); i != gamer.end(); i++)
+		std::cout << *i << " originale" << std::endl;
 
 
 	// std::cout << "ft::max_size  " << ciccio.max_size() << std::endl;

@@ -337,18 +337,87 @@ namespace ft
 			}
 		}
 
-
 		template <class InputIterator>
-    		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0);
+    		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
-			
-
+			size_t range = 0;
+			pointer tmp;
+			tmp = first;
+			while (tmp != last)
+			{
+				tmp++;
+				range++;
+			}
+			_size += range;
+			if (_size > _capacity)
+			 	reserve(_size*2);
+			iterator i = (iterator)_begin;
+			int pos = 0;
+			while (i < position)
+			{
+				pos++;
+				i++;
+			}
+			int iter = _size;
+			while (iter != pos)
+			{
+				_begin[iter] = _begin[iter - range];
+				iter--;
+			}
+			int j = 0;
+			while (j < range)
+			{
+				_begin[pos] = first[j];
+				pos++;
+				j++;
+			}	
 		}
 
+		iterator erase (iterator position)
+		{
+			_size--;
+			iterator i = (iterator)_begin;
+			int pos = 0;
+			while (i < position)
+			{
+				pos++;
+				i++;
+			}
+			int iter = 0;
+			while (pos != _size)
+			{
+				_begin[pos] = _begin[pos + 1];
+				pos++;
+			}
+			return (position);
+		}
 
-
-		iterator erase (iterator position);
-		iterator erase (iterator first, iterator last);
+		iterator erase (iterator first, iterator last)
+		{
+			size_t range = 0;
+			iterator tmp;
+			iterator tmp2 = (iterator)_begin;
+			int pos = 0;
+			tmp = first;
+			while (tmp2 != first)
+			{
+				tmp2++;
+				pos++;
+			}
+			while (tmp != last)
+			{
+				tmp++;
+				range++;
+			}
+			_size -= range;
+			int iter = 0;
+			while (pos < _size)
+			{
+				_begin[pos] = _begin[pos + range];
+				pos++;
+			}
+			return (first);
+		}
 
 		void swap (vector& x){
 			ft::vector<T> tmp;
