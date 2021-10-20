@@ -128,18 +128,18 @@ namespace ft
 		{
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) 
-			:	_size(n),
+			:	_size(0),
 				_begin(nullptr),
 				_capacity(0),
 				_alloc(alloc)
 		{	
 			if (n > 0)
 			{
-				_capacity = _size;
+				_size = n;
+				_capacity = _size * 2;
 				_begin = _alloc.allocate(_capacity);
 				for(size_t i = 0; i < n; i++)
 					_begin[i] = val;
-				std::cout << "SONO NEL COSTRUTTORE BEGIN É " << *_begin << std::endl;
 			}
 		}
 		template <class InputIterator> 
@@ -160,7 +160,7 @@ namespace ft
 			_capacity = _size *2;
 			_begin = _alloc.allocate(_capacity);
 			for (int i = 0; i < _size; i++)
-				_begin[i] = first[i];				//va bene per ora hai vinto tu😡
+				_begin[i] = first[i];
 		
 		}
 		vector (const vector& x){ *this = x; }
@@ -257,7 +257,7 @@ namespace ft
 			_capacity = _size *2;
 			_begin = _alloc.allocate(_capacity);
 			for (int i = 0; i < _size; i++)
-				_begin[i] = first[i];								//va bene per ora hai vinto tu😡
+				_begin[i] = first[i];
 		
 		}
 		void assign (size_type n, const value_type& val)
@@ -288,7 +288,7 @@ namespace ft
 			_size = n;
 		}
 
-		iterator insert (iterator position, const value_type& val)				//tutta da rifare, sto smadonnando
+		iterator insert (iterator position, const value_type& val)
 		{
 			_size++;
 			if (_size > _capacity)
@@ -297,11 +297,9 @@ namespace ft
 			int pos = 0;
 			while (i < position)
 			{
-				std::cout << "i punta a " << *i << "\nposition punta a " << *position << std::endl;
 				pos++;
 				i++;
 			}
-			std::cout << _begin[pos] <<  "<- porcodio\n";
 			int iter = _size;
 			while (iter != pos)
 			{
@@ -316,9 +314,7 @@ namespace ft
 		{
 			_size = _size + n;
 			if (_size > _capacity)
-			 	reserve(_size*2);
-				 
-				 
+			 	reserve(_size*2); 
 			iterator i = (iterator)_begin;
 			int pos = 0;
 			while (i < position)
@@ -336,7 +332,6 @@ namespace ft
 			while (j < n)
 			{
 				_begin[pos] = val;
-				std::cout << "_begin[pos] = " << _begin[pos] << std::endl;
 				pos++;
 				j++;
 			}
@@ -345,9 +340,10 @@ namespace ft
 
 		template <class InputIterator>
     		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0);
-		// {
+		{
+			
 
-		// }
+		}
 
 
 

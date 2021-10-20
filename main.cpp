@@ -9,18 +9,18 @@ int main()
 
 
 
-	ft::vector<int> ciccio (8,3);
+	ft::vector<int> ciccio (4,4);
 	//ciccio.assign(ints, ints + 4);
 	//ft::vector<int> ci(10, 5);
 
 
-	std::vector<int> gamer (8, 3);
+	// std::vector<int> gamer (8, 3);
 	//gamer.assign(ints, ints + 4);
 
-	std::vector<int>::iterator it = (gamer.begin());
+	//std::vector<int>::iterator it = (gamer.begin());
 	//it = gamer.insert(it + 100, 3);
 	//gamer.insert(it, ints, ints+4);
-	gamer.insert(it, 3, 100);
+	//gamer.insert(it, 3, 100);
 
 
 	ft::vector<int>::iterator it2 = ciccio.end();
