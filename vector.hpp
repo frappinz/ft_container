@@ -10,6 +10,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -17,9 +18,10 @@
 #include <string>
 #include <utility>
 #include <iterator>
-#include <vector>
 #include <stdexcept>
 #include "iterator.hpp"
+#include <cstring>
+#include <string.h>
 
   
 //ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
@@ -89,9 +91,14 @@
  /          /' `~~(____ /  ()))))))))))
 |     ---,   \        \     ((((((((((
           `\   \~-_____|      ))))))))
-            `\  |      |_.---.  \*/
+            `\  |      |_.---.  \
 
-
+           N
+          / \
+         |_.,| (_)(_)
+         | = |  |  |
+         `---^ -^--^-   
+*/
 namespace ft 
 {
   template < class T, class Allocator = std::allocator<T> > 
@@ -112,25 +119,25 @@ namespace ft
 		typedef typename allocator_type::difference_type 	difference_type;
 		typedef ft::reverse_iterator<iterator>         		reverse_iterator;
 
-		class out_of_range : public std::exception
+		class out_of_range : public std::out_of_range
 		{
 			public:
-				const char * what () const throw () { return ("out_of_range"); }
+				out_of_range(std::string msg) : std::out_of_range(msg) {};
 		};
 
 		/******************************** COSTRUCTORS ********************************/
 
 		explicit vector(const allocator_type& alloc = allocator_type())
 			:	_size(0),
-				_begin(nullptr),
 				_capacity(0),
+				_begin(nullptr),
 				_alloc(alloc)
 		{
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) 
 			:	_size(0),
-				_begin(nullptr),
 				_capacity(0),
+				_begin(nullptr),
 				_alloc(alloc)
 		{	
 			if (n > 0)
@@ -146,36 +153,31 @@ namespace ft
 			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), 
 					typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
 				: 	_size(0), 
-					_begin(nullptr), 
 					_capacity(0), 
+					_begin(nullptr), 
 					_alloc(alloc)
 		{
-			pointer tmp;
-			tmp = first;
-			while (tmp != last)
-			{
-				tmp++;
-				_size++;
-			}
-			_capacity = _size *2;
-			_begin = _alloc.allocate(_capacity);
-			for (int i = 0; i < _size; i++)
-				_begin[i] = first[i];
-		
+			assign(first, last);
 		}
-		vector (const vector& x){ *this = x; }
+		vector (const vector& x) : _size(0), _capacity(0), _begin(nullptr), _alloc(x._alloc) 
+		{
+			_capacity = x._capacity;
+			_size = x._size;
+			_begin = _alloc.allocate(_capacity);
+			assign(x._begin, (x._begin + x._size));
+		}
 		~vector()
 		{
-			if (this->_begin != nullptr && *_begin != 0)
-				this->_alloc.deallocate(this->_begin, this->_capacity);
+			if (this->_begin != nullptr || _capacity != 0)
+				_alloc.deallocate(_begin, _capacity);
 		}
 
-		vector& operator=( const vector& other ) { 
-			_begin = other._begin;
+		vector& operator=( const vector &other ) { 
 			_alloc = other._alloc;
-			_end = other._end;
 			_size = other._size;
-			_capacity = other._capacity; 
+			_capacity = other._capacity;
+			_begin = nullptr;
+			assign(other._begin, (other._begin + _size));
 			return(*this);
 		}
 
@@ -185,10 +187,10 @@ namespace ft
 		const_iterator begin() const { return const_iterator(_begin); };
 		iterator end(){ return iterator(_begin + _size); }
 		const_iterator end() const { return const_iterator(_begin + _size); }
-		reverse_iterator rbegin() { return reverse_iterator(_begin + _size); }
-		const_reverse_iterator rbegin() const { return const_reverse_iterator(_begin + _size); } 			// da controllare tutti e 4 i reverse
-		reverse_iterator rend() { return reverse_iterator(_begin); }
-		const_reverse_iterator rend() const { return const_reverse_iterator(_begin); }
+		reverse_iterator rbegin() { return reverse_iterator(end()); }
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+		reverse_iterator rend() { return reverse_iterator((begin())); }
+		const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
 
 
 		/********************************      CAPACITY     ********************************/
@@ -198,21 +200,22 @@ namespace ft
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void reserve( size_type n )
 		{
-			if (n > _capacity && _begin!= nullptr)
+			if (n > _capacity || _begin != nullptr)
 			{
-				pointer tmp;
-				tmp = _begin;
-				_alloc.deallocate(_begin,_capacity);
+				pointer tmp = NULL;
+				tmp = _alloc.allocate(_capacity);
+				for (size_t i = 0; i < _size; i++)
+						tmp[i] = _begin[i];
+				if (_begin)
+					_alloc.deallocate(_begin, _capacity);
 				_capacity = n;
 				_begin = _alloc.allocate(_capacity);
-	
-				for(size_t i = 0; i < _size; i++)
-					_begin[i] = tmp[i];
-			}
-			else
-			{
-				_begin = _alloc.allocate(n);
-				_capacity = n;
+				std::cout << "porrcodio" << *tmp << std::endl;
+				for (size_t i = 0; i < _size; i++)
+						_begin[i] = tmp[i];
+				_alloc.deallocate(tmp, _size);
+
+
 			}
 
 		}
@@ -225,13 +228,13 @@ namespace ft
 		const_reference operator[]( size_type pos ) const { return (this->_begin[pos]); }
       	reference at (size_type n){
 			if(n >= _size)
-				throw(out_of_range());
+				throw(out_of_range("vector"));
 			return (_begin[n]);
 		}
 		const_reference at (size_type n) const{
 			if(n >= _size)
-				throw(out_of_range());
-			return (_begin[n]);
+				throw(out_of_range("vector"));
+			return (_begin[n]); 
 		}
 		reference front(){ return _begin[0]; }
 		const_reference front() const { return _begin[0]; }
@@ -242,10 +245,10 @@ namespace ft
 		/********************************   	MODIFIERS     ********************************/
 
 		template <class InputIterator>
-			void assign (InputIterator first, InputIterator last)
+			void assign (InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			_size = 0;
-			pointer tmp;
+			InputIterator tmp;
 			tmp = first;
 			while (tmp != last)
 			{
@@ -256,10 +259,10 @@ namespace ft
 				this->_alloc.deallocate(this->_begin, this->_capacity);
 			_capacity = _size *2;
 			_begin = _alloc.allocate(_capacity);
-			for (int i = 0; i < _size; i++)
-				_begin[i] = first[i];
-		
+			for (size_t i = 0; first != last; first++, i++)
+				_begin[i] = *first;
 		}
+		
 		void assign (size_type n, const value_type& val)
 		{
 			if (n > _capacity)
@@ -268,13 +271,25 @@ namespace ft
 			for (size_t i = 0; i < _size; i++)
 				_begin[i] = val;
 		}
+
+
 		void push_back (const value_type& val)
 		{
 			_size++;
-			if (_size > _capacity)
+			std::cout << "size in push_back: " << _size << std::endl;
+			std::cout << "capacity : " << _capacity << std::endl;
+			if (_size >= _capacity)
+			{
 				reserve(_size * 2);
+				std::cout << "porcodio\n";
+			}
 			_begin[_size - 1] = val;
+			std::cout << "begin _size-1 : " << _begin[_size-1] << std::endl;
 		}
+
+
+
+
 		void pop_back(){ _size--; }
 		void resize (size_type n, value_type val = value_type())
 		{
@@ -290,6 +305,7 @@ namespace ft
 
 		iterator insert (iterator position, const value_type& val)
 		{
+			std::cout << "sono gay1\n";
 			_size++;
 			if (_size > _capacity)
 			 	reserve(_size*2);
@@ -297,11 +313,12 @@ namespace ft
 			int pos = 0;
 			while (i < position)
 			{
+				std::cout << "sono gay\n";
 				pos++;
 				i++;
 			}
 			int iter = _size;
-			while (iter != pos)
+			while (iter != pos && (iter - 1) != pos)
 			{
 				_begin[iter] = _begin[iter - 1];
 				iter--;
@@ -312,23 +329,23 @@ namespace ft
 		
 		void insert (iterator position, size_type n, const value_type& val)
 		{
-			_size = _size + n;
+			_size += n;
 			if (_size > _capacity)
 			 	reserve(_size*2); 
 			iterator i = (iterator)_begin;
-			int pos = 0;
+			size_t pos = 0;
 			while (i < position)
 			{
 				pos++;
 				i++;
 			}
-			int iter = _size;
-			while (iter != pos)
+			size_t iter = _size;
+			while (iter != pos && (iter - n) != pos)
 			{
 				_begin[iter] = _begin[iter - n];
 				iter--;
 			}
-			int j = 0;
+			size_t j = 0;
 			while (j < n)
 			{
 				_begin[pos] = val;
@@ -341,7 +358,7 @@ namespace ft
     		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			size_t range = 0;
-			pointer tmp;
+			InputIterator tmp;
 			tmp = first;
 			while (tmp != last)
 			{
@@ -352,38 +369,32 @@ namespace ft
 			if (_size > _capacity)
 			 	reserve(_size*2);
 			iterator i = (iterator)_begin;
-			int pos = 0;
+			size_t pos = 0;
 			while (i < position)
 			{
 				pos++;
 				i++;
 			}
-			int iter = _size;
-			while (iter != pos)
+			size_t index = _size;
+			while (index != pos && (index - range) != pos)
 			{
-				_begin[iter] = _begin[iter - range];
-				iter--;
+				_begin[index] = _begin[index - range];
+				index--;
 			}
-			int j = 0;
-			while (j < range)
-			{
-				_begin[pos] = first[j];
-				pos++;
-				j++;
-			}	
+			for(; first != last; first++, pos++)
+				_begin[pos] = *first;
 		}
 
 		iterator erase (iterator position)
 		{
 			_size--;
 			iterator i = (iterator)_begin;
-			int pos = 0;
+			size_t pos = 0;
 			while (i < position)
 			{
 				pos++;
 				i++;
 			}
-			int iter = 0;
 			while (pos != _size)
 			{
 				_begin[pos] = _begin[pos + 1];
@@ -397,7 +408,7 @@ namespace ft
 			size_t range = 0;
 			iterator tmp;
 			iterator tmp2 = (iterator)_begin;
-			int pos = 0;
+			size_t pos = 0;
 			tmp = first;
 			while (tmp2 != first)
 			{
@@ -410,7 +421,6 @@ namespace ft
 				range++;
 			}
 			_size -= range;
-			int iter = 0;
 			while (pos < _size)
 			{
 				_begin[pos] = _begin[pos + range];
@@ -441,7 +451,6 @@ namespace ft
 		size_t _size;
 		size_t _capacity;
 		pointer _begin;
-		pointer _end;
 		Allocator _alloc;
   	};
 	

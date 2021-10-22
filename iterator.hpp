@@ -160,7 +160,7 @@ namespace ft
 	typename base_iterator<Iterator>::difference_type
 	operator-(const base_iterator<Iterator>& __x, const base_iterator<Iterator>& __y)
 	{
-		return __y.base() - __x.base();
+		return __x.base() - __y.base();
 	}
 	
 } //namespace ft
