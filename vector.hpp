@@ -17,7 +17,6 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <iterator>
 #include <stdexcept>
 #include "iterator.hpp"
 #include <cstring>
@@ -113,11 +112,11 @@ namespace ft
 		typedef typename allocator_type::pointer         	pointer;
 		typedef typename allocator_type::const_pointer  	const_pointer;
 		typedef typename allocator_type::size_type       	size_type;
+		typedef typename allocator_type::difference_type 	difference_type;
 		typedef ft::base_iterator<pointer>					iterator;
 		typedef ft::base_iterator<const_pointer>			const_iterator;
-		typedef ft::reverse_iterator<iterator>    			const_reverse_iterator;
-		typedef typename allocator_type::difference_type 	difference_type;
 		typedef ft::reverse_iterator<iterator>         		reverse_iterator;
+		typedef ft::reverse_iterator<const_iterator>    	const_reverse_iterator;
 
 		class out_of_range : public std::out_of_range
 		{
@@ -188,9 +187,9 @@ namespace ft
 		iterator end(){ return iterator(_begin + _size); }
 		const_iterator end() const { return const_iterator(_begin + _size); }
 		reverse_iterator rbegin() { return reverse_iterator(end()); }
-		const_reverse_iterator rbegin() const { return const_reverse_iterator(end()); }
+		const_reverse_iterator rbegin() const { return const_reverse_iterator(rend()); }
 		reverse_iterator rend() { return reverse_iterator((begin())); }
-		const_reverse_iterator rend() const { return const_reverse_iterator(begin()); }
+		const_reverse_iterator rend() const { return const_reverse_iterator(rbegin()); }
 
 
 		/********************************      CAPACITY     ********************************/
@@ -200,22 +199,20 @@ namespace ft
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void reserve( size_type n )
 		{
-			if (n > _capacity || _begin != nullptr)
+			if (n > _capacity && _begin != nullptr)  //mettiamo && perché se no entra anche quando _begin non é allocato
 			{
 				pointer tmp = NULL;
-				tmp = _alloc.allocate(_capacity);
+				tmp = _alloc.allocate(n);
 				for (size_t i = 0; i < _size; i++)
 						tmp[i] = _begin[i];
-				if (_begin)
-					_alloc.deallocate(_begin, _capacity);
+				_alloc.deallocate(_begin, _capacity);
+				_capacity = n;
+				_begin = tmp;
+			}
+			else if (_begin == nullptr)
+			{
 				_capacity = n;
 				_begin = _alloc.allocate(_capacity);
-				std::cout << "porrcodio" << *tmp << std::endl;
-				for (size_t i = 0; i < _size; i++)
-						_begin[i] = tmp[i];
-				_alloc.deallocate(tmp, _size);
-
-
 			}
 
 		}
@@ -272,23 +269,15 @@ namespace ft
 				_begin[i] = val;
 		}
 
-
 		void push_back (const value_type& val)
 		{
 			_size++;
-			std::cout << "size in push_back: " << _size << std::endl;
-			std::cout << "capacity : " << _capacity << std::endl;
 			if (_size >= _capacity)
 			{
 				reserve(_size * 2);
-				std::cout << "porcodio\n";
 			}
 			_begin[_size - 1] = val;
-			std::cout << "begin _size-1 : " << _begin[_size-1] << std::endl;
 		}
-
-
-
 
 		void pop_back(){ _size--; }
 		void resize (size_type n, value_type val = value_type())
@@ -305,22 +294,17 @@ namespace ft
 
 		iterator insert (iterator position, const value_type& val)
 		{
-			std::cout << "sono gay1\n";
-			_size++;
-			if (_size > _capacity)
-			 	reserve(_size*2);
-			iterator i = (iterator)_begin;
-			int pos = 0;
-			while (i < position)
-			{
-				std::cout << "sono gay\n";
+			size_t pos = 0;
+			for (iterator it = begin(); it != position; ++it)
 				pos++;
-				i++;
-			}
-			int iter = _size;
+			if (_size+1 > _capacity)
+			 	reserve((_size + 1)*2);
+			_size++;
+
+			size_t iter = _size;
 			while (iter != pos && (iter - 1) != pos)
 			{
-				_begin[iter] = _begin[iter - 1];
+				_begin[iter - 1] = _begin[iter - 2];
 				iter--;
 			}
 			_begin[pos] = val;
@@ -329,21 +313,17 @@ namespace ft
 		
 		void insert (iterator position, size_type n, const value_type& val)
 		{
-			_size += n;
-			if (_size > _capacity)
-			 	reserve(_size*2); 
-			iterator i = (iterator)_begin;
 			size_t pos = 0;
-			while (i < position)
-			{
+			for (iterator it = begin(); it != position; ++it)
 				pos++;
-				i++;
-			}
-			size_t iter = _size;
-			while (iter != pos && (iter - n) != pos)
+			if (_size + n > _capacity)
+			 	reserve((_size + n) *2);
+			_size += n;
+			size_t index = _size;
+			while (index > pos && (index - n) > pos)
 			{
-				_begin[iter] = _begin[iter - n];
-				iter--;
+				_begin[index - 1] = _begin[index - n - 1];
+				index--;
 			}
 			size_t j = 0;
 			while (j < n)
@@ -358,27 +338,18 @@ namespace ft
     		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			size_t range = 0;
-			InputIterator tmp;
-			tmp = first;
-			while (tmp != last)
-			{
-				tmp++;
+			for (InputIterator i = first; i != last; ++i)
 				range++;
-			}
-			_size += range;
-			if (_size > _capacity)
-			 	reserve(_size*2);
-			iterator i = (iterator)_begin;
 			size_t pos = 0;
-			while (i < position)
-			{
+			for (iterator it = begin(); it != position; ++it)
 				pos++;
-				i++;
-			}
+			if (_size + range > _capacity)
+			 	reserve((_size + range)*2);
+			_size += range;
 			size_t index = _size;
-			while (index != pos && (index - range) != pos)
+			while (index > pos && (index - range) > pos)
 			{
-				_begin[index] = _begin[index - range];
+				_begin[index - 1] = _begin[index - range - 1];
 				index--;
 			}
 			for(; first != last; first++, pos++)

@@ -4,15 +4,20 @@
 int		main(void)
 {
 
-	// int ints[] = {1, 2, 3, 4};
+	int ints[] = {1, 2, 3, 4};
 	ft::vector<int> vct;
+	ft::vector<int> vct1;
+	ft::vector<int> vct2;
+
 	// ft::vector<int> tris(ints, ints+4);
 
 
 	// tris.reserve(6);
 	//tris.push_back(4);
 // 	// ft::vector<int>::iterator it = (vct.end()-1);
-	vct.insert(vct.begin(), 2, 21);
+	vct.insert(vct.end(), 2, 21);
+	vct1.insert(vct1.end(), 2);
+	vct2.insert(vct2.end(), ints, ints+3);
  	// vct.insert(vct.end(), 42);
 	//  std::cout << vct[0] << std::endl;
 	//  std::cout << vct[1] << std::endl;

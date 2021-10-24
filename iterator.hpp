@@ -3,7 +3,6 @@
 
 #include <cstddef>
 #include <iostream>
-#include <iterator>
 
 namespace ft
 {
@@ -126,9 +125,10 @@ namespace ft
 		explicit base_iterator(Iterator x) : current(x) {}
 		template <class U> base_iterator(const base_iterator<U>& u) : current(u.base()) {}
 		template <class U> base_iterator& operator=(const base_iterator<U>& u) { current = u.current; return *this; }
+
 		Iterator base() const { return current; };
-		reference operator*() const { return *current; };
-		pointer   operator->() const { return &(operator*()); }
+		reference operator*() const { return static_cast<reference>(*current); };
+		pointer   operator->() const { return current; }
 		base_iterator& operator++() {  ++current; return *this; }
 		base_iterator  operator++(int) { base_iterator __tmp(*this); ++current; return __tmp; }
 		base_iterator& operator--() { --current; return *this; }
@@ -137,7 +137,7 @@ namespace ft
 		base_iterator& operator+=(difference_type n) { current += n; return *this; }
 		base_iterator  operator- (difference_type n) const { return base_iterator(current - n);}
 		base_iterator& operator-=(difference_type n) { current -= n; return *this; }
-		reference operator[](difference_type n) const { return *(*this + n); }
+		reference operator[](difference_type n) const { return static_cast<reference>(current[n]); }
 	};
 	template <class Iterator>
   	bool operator== (const base_iterator<Iterator>& lhs, const base_iterator<Iterator>& rhs) { return lhs.base() == rhs.base();}
