@@ -43,7 +43,7 @@ namespace ft
 		typedef Category  iterator_category;
 	};
 
-	/**************** REVERSE ITERATOR ****************/
+	/************************************ REVERSE ITERATOR *********************************** */
 
 	template <class Iterator>
 	class reverse_iterator
@@ -113,7 +113,7 @@ namespace ft
 
 
 
-	/**************** ITERATOR ****************/
+	/************************************       ITERATOR       ************************************/
 
 
 	template <class Iterator>

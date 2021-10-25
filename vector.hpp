@@ -22,7 +22,8 @@
 #include "iterator.hpp"
 #include <cstring>
 #include <string.h>
-
+//#include <type_traits>
+#include "utils.hpp"
   
 //ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
 
@@ -151,7 +152,7 @@ namespace ft
 		}
 		template <class InputIterator> 
 			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), 
-					typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
+					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
 				: 	_size(0), 
 					_capacity(0), 
 					_begin(nullptr), 
@@ -242,7 +243,7 @@ namespace ft
 		/********************************   	MODIFIERS     ********************************/
 
 		template <class InputIterator>
-			void assign (InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			_size = 0;
 			InputIterator tmp;
@@ -271,12 +272,13 @@ namespace ft
 
 		void push_back (const value_type& val)
 		{
-			_size++;
-			if (_size >= _capacity)
+			//_size++;
+			if ((_size + 1) >= _capacity)
 			{
-				reserve(_size * 2);
+				reserve((_size+1) * 2);
 			}
-			_begin[_size - 1] = val;
+			insert((end()), val);
+			//_begin[_size - 1] = val;
 		}
 
 		void pop_back(){ _size--; }
@@ -337,7 +339,7 @@ namespace ft
 		}
 
 		template <class InputIterator>
-    		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+    		void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			size_t range = 0;
 			for (InputIterator i = first; i != last; ++i)
@@ -425,64 +427,34 @@ namespace ft
 	/********************************  OPERATOR OVERLOAD  ********************************/
 
 	template <class T, class Alloc>
-		bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) {
-			if (lhs.size() == rhs.size())
-			{
-				for (size_t i = 0; i < lhs.size(); i++)
-				{
-					if (lhs.at(i) != rhs.at(i))
-						return (false);
-				}
-				return (true);
-			}
-			return (false);
-		}
-
-	template <class T, class Alloc>
-		bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs){ return (!(lhs == rhs)); }
-
-	template <class T, class Alloc>
-		bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) 
 	{
-		// da tornare dopo aver fatto lexi
-		size_t x;
-		if (lhs.size() < rhs.size()) 
-			x = lhs.size();
-		else
-			x = rhs.size();
-		for (size_t i = 0; i < x; i++)
-		{
-			if (lhs.at(i) < rhs.at(i))
-				return (true);
-			else if (lhs.at(i) > rhs.at(i))
-				return (false);
-		}
-		return (lhs.size() < rhs.size());
+		return (!(lhs > rhs) && !(lhs < rhs));
 	}
 
 	template <class T, class Alloc>
-		bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs){ return (!(lhs == rhs)); }
+
+	template <class T, class Alloc>
+	bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
-		size_t x;
-		if (lhs.size() < rhs.size()) 
-			x = lhs.size();
-		else
-			x = rhs.size();
-		for (size_t i = 0; i < x; i++)
-		{
-			if (lhs.at(i) < rhs.at(i))
-				return (true);
-			else if (lhs.at(i) > rhs.at(i))
-				return (false);
-		}
-		return (lhs.size() <= rhs.size());
+		return (ft::lexicographical_compare(lhs.begin(), lhs.end(), rhs.begin(), rhs.end()));
+	}
+
+	template <class T, class Alloc>
+	bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
+	{
+		return (!(lhs > rhs));
 	}
 		
 	template <class T, class Alloc>
-		bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs <= rhs)); }
+	bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) 
+	{
+		return (ft::lexicographical_compare(rhs.begin(), rhs.end(), lhs.begin(), lhs.end()));	
+	}
 		
 	template <class T, class Alloc>
-		bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs < rhs)); }
+	bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return (!(lhs < rhs)); }
 		
 } // namespace ft
 
