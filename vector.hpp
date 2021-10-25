@@ -11,6 +11,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iterator>
 #include <functional>
 #include <iostream>
 #include <limits>
@@ -171,11 +172,10 @@ namespace ft
 				_alloc.deallocate(_begin, _capacity);
 		}
 
-		vector& operator=( const vector &other ) { 
+		vector& operator=( const vector &other ) {
 			_alloc = other._alloc;
 			_size = other._size;
 			_capacity = other._capacity;
-			_begin = nullptr;
 			assign(other._begin, (other._begin + _size));
 			return(*this);
 		}
@@ -194,7 +194,7 @@ namespace ft
 
 		/********************************      CAPACITY     ********************************/
 
-		bool empty() const { return(_capacity == 0); }
+		bool empty() const { return(_size == 0); }
 		size_t size() const { return (_size); }
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void reserve( size_type n )
@@ -284,6 +284,8 @@ namespace ft
 		{
 			if (n >= _size)
 			{
+				if (n > _capacity)
+					reserve(n);
 				if (!val)
 					val = 0;
 				for (size_t i = _size; i < n; i++)
@@ -401,19 +403,10 @@ namespace ft
 		}
 
 		void swap (vector& x){
-			ft::vector<T> tmp;
-			tmp._begin = this->_begin;
-			tmp._alloc = this->_alloc;
-			tmp._size = this->_size;
-			tmp._capacity = this->_capacity;
-			this->_begin = x._begin;
-			this->_alloc = x._alloc;
-			this->_size = x._size;
-			this->_capacity = x._capacity;
-			x._begin = tmp._begin;
-			x._alloc = tmp._alloc;
-			x._size = tmp._size;
-			x._capacity = tmp._capacity;
+			std::swap(this->_begin, x._begin);
+			std::swap(this->_size, x._size);
+			std::swap(this->_capacity, x._capacity);
+			std::swap(this->_alloc, x._alloc);
 		}
 		void clear(){this->_size = 0;}
 
@@ -451,30 +444,38 @@ namespace ft
 	template <class T, class Alloc>
 		bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
-		if (lhs.size() < rhs.size())
-			return true;
-		if (lhs.size() > rhs.size())
-			return false;
-		
-		for (size_t i = 0; i < lhs.size(); i++)
+		// da tornare dopo aver fatto lexi
+		size_t x;
+		if (lhs.size() < rhs.size()) 
+			x = lhs.size();
+		else
+			x = rhs.size();
+		for (size_t i = 0; i < x; i++)
 		{
-			if (lhs.at(i) >= rhs.at(i))
+			if (lhs.at(i) < rhs.at(i))
+				return (true);
+			else if (lhs.at(i) > rhs.at(i))
 				return (false);
 		}
-		return (true);
+		return (lhs.size() < rhs.size());
 	}
 
 	template <class T, class Alloc>
 		bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs)
 	{
-		if (lhs.size() > rhs.size())
-			return false;
-		for (size_t i = 0; i < lhs.size(); i++)
+		size_t x;
+		if (lhs.size() < rhs.size()) 
+			x = lhs.size();
+		else
+			x = rhs.size();
+		for (size_t i = 0; i < x; i++)
 		{
-			if (lhs.at(i) > rhs.at(i))
+			if (lhs.at(i) < rhs.at(i))
+				return (true);
+			else if (lhs.at(i) > rhs.at(i))
 				return (false);
 		}
-		return (true);
+		return (lhs.size() <= rhs.size());
 	}
 		
 	template <class T, class Alloc>
