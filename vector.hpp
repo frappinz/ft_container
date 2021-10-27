@@ -205,7 +205,7 @@ namespace ft
 				pointer tmp = NULL;
 				tmp = _alloc.allocate(n);
 				for (size_t i = 0; i < _size; i++)
-						tmp[i] = _begin[i];
+						_alloc.construct((tmp + i), _begin[i]);
 				_alloc.deallocate(_begin, _capacity);
 				_capacity = n;
 				_begin = tmp;
@@ -272,13 +272,11 @@ namespace ft
 
 		void push_back (const value_type& val)
 		{
-			//_size++;
 			if ((_size + 1) >= _capacity)
-			{
 				reserve((_size+1) * 2);
-			}
-			insert((end()), val);
-			//_begin[_size - 1] = val;
+			_size++;
+			_alloc.construct((_begin + _size - 1), val);
+			_begin[_size - 1] = val;
 		}
 
 		void pop_back(){ _size--; }
@@ -304,7 +302,6 @@ namespace ft
 			if (_size+1 > _capacity)
 			 	reserve((_size + 1)*2);
 			_size++;
-
 			size_t iter = _size;
 			while (iter != pos && (iter - 1) != pos)
 			{
