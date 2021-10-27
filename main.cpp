@@ -1,14 +1,32 @@
-#include "vector.hpp"
-#include "stack.hpp"
+
 #include <iostream>
+#include <map>
 
+bool fncomp (char lhs, char rhs) {return lhs<rhs;}
 
-int main()
+struct classcomp {
+  bool operator() (const char& lhs, const char& rhs) const
+  {return lhs<rhs;}
+};
+
+int main ()
 {
+	std::map<char,int> first;
 
-	int ints[] = {1, 2, 3, 4};
-	ft::stack<int> ciao(ints, ints+4);
-	for (size_t i = 0; i < 4; i++)
-		std::cout << ciao[i] << std::endl;
+	first['a']=10;
+	first['b']=30;
+	first['c']=50;
+	first['d']=70;
 
+	std::map<char,int> second;
+	second['a']=11;
+  	second['b']=22;
+  	second['c']=33;
+
+	std::cout << second.at('a');
+	//std::map<char,int> third (second);
+
+
+
+  	return 0;
 }

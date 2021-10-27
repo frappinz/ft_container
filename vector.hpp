@@ -200,7 +200,7 @@ namespace ft
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void reserve( size_type n )
 		{
-			if (n > _capacity && _begin != nullptr)  //mettiamo && perché se no entra anche quando _begin non é allocato
+			if (n > _capacity && _begin != nullptr)
 			{
 				pointer tmp = NULL;
 				tmp = _alloc.allocate(n);
