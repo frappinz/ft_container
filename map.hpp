@@ -30,8 +30,6 @@ namespace ft
 	};
 
 
-
-
 	template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T> > >
 	class map
@@ -74,7 +72,7 @@ namespace ft
 			typedef allocator_traits<allocator_type>            _alloc_traits;
 
 			size_t 	_size;
-			_base _tr ee;
+			_base _tree;
 
 
 							/********************************    COSTRUCTORS    ********************************/
