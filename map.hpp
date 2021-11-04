@@ -2,9 +2,10 @@
 #define MAP_HPP
 
 #include <map>
+#include <__tree>
 #include <memory>
 #include "iterator.hpp"
-#include "map_iterator.hpp"
+#include "binary_tree.hpp"
 #include <functional>
 
 namespace ft
@@ -32,7 +33,7 @@ namespace ft
 
 	template <class Key, class T, class Compare = std::less<Key>,
           class Allocator = std::allocator<std::pair<const Key, T> > >
-	class map
+	class map : public __tree<Key, Compare, Allocator>
 	{
 		public:
 			/****************** MEMBER TYPES ******************/
@@ -48,10 +49,11 @@ namespace ft
 			typedef typename allocator_type::size_type       size_type;
 			typedef typename allocator_type::difference_type difference_type;
 
-			typedef ft::map_iterator<pointer>				iterator;
-			typedef ft::map_const_iterator<const_pointer>	const_iterator;
-			typedef ft::reverse_iterator<iterator>         	reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+			typedef typename ft::__tree<value_type, key_compare, Allocator>::iterator				iterator;
+			typedef typename ft::__tree<value_type, key_compare, Allocator>::iterator				const_iterator;
+
+			// typedef ft::reverse_iterator<iterator>         	reverse_iterator;
+			// typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
 		class value_compare : public std::binary_function<value_type, value_type, bool>
 		{
@@ -66,10 +68,8 @@ namespace ft
 		private:
 			typedef value_type            	_value_type;
 			typedef _map_value_compare<key_type, _value_type, key_compare> _vc;
-			//typedef typename std::_rebind_alloc_helper<std::allocator_traits<allocator_type>, _value_type>::type _allocator_type;		C++11
-			typedef _tree<value_type, _vc, allocator_type>   	_base;
-			typedef typename _base::_node_traits                _node_traits;
-			typedef allocator_traits<allocator_type>            _alloc_traits;
+			typedef __tree<value_type, _vc, allocator_type>   	_base;
+			//typedef typename _base::_node_traits                _node_traits;
 
 			size_t 	_size;
 			_base _tree;
@@ -77,8 +77,8 @@ namespace ft
 
 							/********************************    COSTRUCTORS    ********************************/
 
-
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type());
+		public: 
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()){}
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type());
 		map(const map& m);
@@ -87,15 +87,15 @@ namespace ft
 
 							/********************************      ITERATOR     ********************************/
 
-		iterator 		begin();
+		iterator 		begin(){ return (iterator)_tree.__begin_node(); }
 		const_iterator 	begin() const;
 		iterator 		end();
 		const_iterator 	end()   const;
 
-		reverse_iterator 		rbegin();
-		const_reverse_iterator 	rbegin() const;
-		reverse_iterator 		rend();
-		const_reverse_iterator	rend()   const;
+		// reverse_iterator 		rbegin();
+		// const_reverse_iterator 	rbegin() const;
+		// reverse_iterator 		rend();
+		// const_reverse_iterator	rend()   const;
 
 
 							/********************************      CAPACITY     ********************************/
@@ -112,7 +112,20 @@ namespace ft
 
 							/********************************   	MODIFIERS     ********************************/
 
-		std::pair<iterator, bool> 	insert(const value_type& v);
+		std::pair<iterator, bool> 	insert(const value_type& v)
+		{
+			//mymap.insert ( std::pair<char,int>('a',100) );
+			iterator b;
+			b = begin();
+			while (true)
+			{
+				if (v.first < *b)
+				{
+					std::cout << "alalalal\n";
+				}
+			}
+
+		}
 		iterator 					insert(const_iterator position, const value_type& v);
 		template <class InputIterator>
 			void 					insert(InputIterator first, InputIterator last);

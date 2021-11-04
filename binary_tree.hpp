@@ -5,7 +5,7 @@
 #include <__tree>
 #include "iterator.hpp"
 //#include "map_iterator.hpp"
-//#include "map.hpp"
+#include <map>
 namespace ft
 {
 
@@ -75,7 +75,7 @@ __tree_is_left_child(_NodePtr __x)
 //    __x is a proper subtree, returns the black height (null counts as 1).  If
 //    __x is an improper subtree, returns 0.
 
-/*
+
 template <class _NodePtr>
 unsigned
 __tree_sub_invariant(_NodePtr __x)
@@ -106,7 +106,7 @@ __tree_sub_invariant(_NodePtr __x)
     if (__h != __tree_sub_invariant(__x->__right_))
         return 0;  // invalid or different height right subtree
     return __h + __x->__is_black_;  // return black height of this node
-} */
+}
 
 
 
@@ -336,6 +336,8 @@ __tree_balance_after_insert(_NodePtr __root, _NodePtr __x)
 // Postcondition: __tree_invariant(end_node->__left_) == true && end_node->__left_
 //                nor any of its children refer to __z.  end_node->__left_
 //                may be different than the value passed in as __root.
+
+
 template <class _NodePtr>
 void
 __tree_remove(_NodePtr __root, _NodePtr __z)
@@ -531,8 +533,7 @@ template <class _Tp, class _Compare, class Allocator = std::allocator<_Tp> >
 class __tree
 {
 public:
-	struct Node;
-	//class tree_iterator;
+	//friend class map;
     typedef _Tp                                     	value_type;
     typedef _Compare                                	value_compare;
     typedef Allocator                               	allocator_type;
@@ -542,29 +543,30 @@ public:
     typedef typename allocator_type::difference_type 	difference_type;
     typedef tree_iterator<value_type, pointer, difference_type>            	iterator;
     typedef tree_iterator<value_type, const_pointer, difference_type> 		const_iterator;
+	typedef struct Node <pointer, _Tp, _Compare>		_Node;
 
 
 
 private:
     iterator            begin_node; // nei costruttori punta all'end node
-	iterator			end_node; //deve essere genitore di root
+	_Node				end_node; //deve essere genitore di root
 	Allocator			__alloc;
 	size_type			__size;
 	value_compare		__value_compare;
 
 public:
-    iterator __end_node() { return end_node; }
+    _Node __end_node() { return end_node; }
    // Iterator __end_node() const { return __end_node; }
     Allocator& __node_alloc() {return __alloc; }
     const Allocator& __node_alloc() const {return __alloc;}
           iterator __begin_node() {return begin_node;}
-    const pointer& __begin_node() const {return __begin_node;}
+    const pointer& __begin_node() const {return begin_node;}
           size_type& size() { return __size; }
     const size_type& size() const { return __size; }
           value_compare& value_comp() { return __value_compare; }
     const value_compare& value_comp() const { return __value_compare; }
-    pointer __root() const { return end_node->__left_; }
-
+    pointer __root() const { return end_node.__left_; }
+	__tree() : __size(0) {}
     explicit __tree(const value_compare& __comp) : __size(0), __value_compare(__comp)
 	{
 		begin_node = end_node;
@@ -578,8 +580,20 @@ public:
     	begin_node = end_node;
 	}
     __tree(const __tree& __t) {} // da fare
-    __tree& operator=(const __tree& __t){} // da fare
-    ~__tree() { destroy(__root()); }
+    __tree& operator=(const __tree& __t){
+		if (this != &__t)
+		{
+			__value_compare = __t.value_compare();
+			if (__alloc != __t.__alloc)
+				clear();
+			else
+				__alloc = __t.__alloc;
+			end_node = __t.end_node;
+			begin_node = __t.begin_node;
+			__size = __t.__size;
+		}
+	} // da fare
+    ~__tree() { __alloc.destroy(__root()); }
 
           iterator begin()  {return       iterator(__begin_node());}
     const_iterator begin() const {return const_iterator(__begin_node());}
@@ -590,18 +604,66 @@ public:
 
     void clear()
 	{
-		destroy(__root());
+		__alloc.destroy(__root());
 		__size = 0;
 		begin_node = end_node;
 		end_node->__left_ = nullptr;
 		
 	}
 
-    void swap(__tree& __t);
-    iterator erase(const_iterator __p);
-    iterator erase(const_iterator __f, const_iterator __l);
-	std::pair<iterator, bool> insert( const value_type& value );
-	iterator insert( iterator hint, const value_type& value );
+    void swap(__tree& __t)
+	{;
+    	std::swap(begin_node, __t.begin_node);
+    	std::swap(end_node, __t.end_node);
+    	std::swap(__alloc, __t.__alloc);
+    	std::swap(__size, __t.__size);
+		std::swap(__value_compare, __t.__value_compare);
+    	if (size() == 0)
+			__begin_node() = __end_node();
+		else
+			__end_node()->__left_->__parent_ = static_cast<pointer>(__end_node());
+		if (__t.size() == 0)
+			__t.__begin_node() = __t.__end_node();
+		else
+			__t.__end_node()->__left_->__parent_ = static_cast<pointer>(__t.__end_node());
+	}
+    iterator erase(const_iterator __p)
+	{
+		pointer __np = __p.__get_np();
+		iterator __r = __remove_node_pointer(__np);
+		Allocator& __na = __node_alloc();
+		__alloc.destroy(__na, __get_ptr(const_cast<pointer>(*__p)));
+		__alloc.deallocate(__na, __np, 1);
+		return __r;
+	}
+
+    iterator erase(const_iterator __f, const_iterator __l)
+	{
+		while (__f != __l)
+			__f = erase(__f);
+		return iterator(__l.__ptr_);
+	}
+
+	std::pair<iterator, bool> insert( const value_type& value ) //std::pair 
+	{
+		// //mymap.insert ( std::pair<char,int>('a',100) );
+		// iterator _beg;
+		// //value->key;
+		// //value
+		// pointer _parent;
+		// pointer _child = __fin
+
+		
+
+	}
+	iterator insert( iterator hint, const value_type& value )
+	{
+		// __parent_pointer __parent;
+		// __node_base_pointer& __child = __find_leaf(__p, __parent, _NodeTypes::__get_key(__v));
+		// __node_holder __h = __construct_node(__v);
+		// __insert_node_at(__parent, __child, static_cast<__node_base_pointer>(__h.get()));
+		// return iterator(__h.release());
+	}
     //iterator find(const _Key& __v);
 
 
@@ -629,7 +691,20 @@ public:
 
     // template <class, class, class, class> friend class map;
     // template <class, class, class, class> friend class multimap;
+	//template <class _Tp, class _Compare, class _Allocator>
+	iterator __remove_node_pointer(pointer __ptr)
+	{
+		iterator __r(__ptr);
+		++__r;
+		if (__begin_node() == __ptr)
+			__begin_node() = __r.__ptr_;
+		--size();
+		__tree_remove(__end_node()->__left_,
+					static_cast<pointer>(__ptr));
+		return __r;
+	}
 };
+
 
 
 
@@ -638,7 +713,6 @@ public:
 
 	template <class _Tp, class Iterator, class _DiffType>
 	class tree_iterator 
-			: public base_iterator<Iterator>
 	{
 		//class _tree;
 		typedef Iterator                                       	pointer;
@@ -647,12 +721,12 @@ public:
 	public:
 		struct Node;
 		class _tree;
-		typedef bidirectional_iterator_tag                     iterator_category;
+		//typedef bidirectional_iterator_tag                     iterator_category;
 		typedef _Tp                                            value_type;
 		typedef _DiffType                                      difference_type;
 		typedef value_type&                                    reference;
 	
-		tree_iterator() : __ptr_(nullptr) {}
+		tree_iterator() : __ptr_() {}
 		reference operator*() const { return static_cast<reference>(*__ptr_); }  
 		pointer operator->() const { return __ptr_; }
 

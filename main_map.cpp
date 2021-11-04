@@ -1,13 +1,10 @@
 #include "binary_tree.hpp"
+#include "map.hpp"
 #include <iostream>
 
 int main()
 {
-	ft::_tree<int> albero;
-	albero.insertValue(albero.getRoot(), 10);
-	albero.insertValue(albero.getRoot(), 2);
-	albero.insertValue(albero.getRoot(), 11);
-	albero.insertValue(albero.getRoot(), 3);
+	ft::map<char, int> albero;
+	albero.insert ( std::pair<char,int>('a',100) );
 	
-	std::cout << albero;
 }
