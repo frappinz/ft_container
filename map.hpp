@@ -7,6 +7,8 @@
 #include "iterator.hpp"
 #include "binary_tree.hpp"
 #include <functional>
+#include <utility>
+#include <iostream>
 
 namespace ft
 {
@@ -19,11 +21,11 @@ namespace ft
 			_map_value_compare(_Compare c) : _Compare(c) {}
 			const _Compare& key_comp() const {return *this;}
 			bool operator()(const _CP& _x, const _CP& _y) const
-				{return static_cast<const _Compare&>(*this)(_x._get_value().first, _y._get_value().first);}
+				{return static_cast<const _Compare&>(*this)(_x.first, _y.first);}
 			bool operator()(const _CP& _x, const _Key& _y) const
-				{return static_cast<const _Compare&>(*this)(_x._get_value().first, _y);}
+				{return static_cast<const _Compare&>(*this)(_x.first, _y);}
 			bool operator()(const _Key& _x, const _CP& _y) const
-				{return static_cast<const _Compare&>(*this)(_x, _y._get_value().first);}
+				{return static_cast<const _Compare&>(*this)(_x, _y.first);}
 			void swap(_map_value_compare&_y)
 			{
 				std::swap(static_cast<_Compare&>(*this), static_cast<_Compare&>(_y));
@@ -31,58 +33,56 @@ namespace ft
 	};
 
 
-	template <class Key, class T, class Compare = std::less<Key>,
-          class Allocator = std::allocator<std::pair<const Key, T> > >
-	class map : public __tree<Key, Compare, Allocator>
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<Node <std::pair<const Key, T> > > >
+	class map
 	{
 		public:
 			/****************** MEMBER TYPES ******************/
-			typedef Key                                      key_type;
-			typedef T                                        mapped_type;
-			typedef std::pair<const key_type, mapped_type>   value_type;
-			typedef Compare                                  key_compare;
-			typedef Allocator                                allocator_type;
-			typedef typename allocator_type::reference       reference;
-			typedef typename allocator_type::const_reference const_reference;
-			typedef typename allocator_type::pointer         pointer;
-			typedef typename allocator_type::const_pointer   const_pointer;
-			typedef typename allocator_type::size_type       size_type;
-			typedef typename allocator_type::difference_type difference_type;
+			typedef Key                                      	key_type;
+			typedef T                                        	data_type;
+			typedef std::pair<const key_type, data_type>   		pair;
+			typedef Compare                                  	key_compare;
+			typedef Allocator                                	allocator_type;
+			typedef typename allocator_type::reference       	reference;
+			typedef typename allocator_type::const_reference 	const_reference;
+			typedef typename allocator_type::pointer         	pointer;
+			typedef typename allocator_type::const_pointer   	const_pointer;
+			typedef typename allocator_type::size_type       	size_type;
+			typedef typename allocator_type::difference_type 	difference_type;
 
-			typedef typename ft::__tree<value_type, key_compare, Allocator>::iterator				iterator;
-			typedef typename ft::__tree<value_type, key_compare, Allocator>::iterator				const_iterator;
+			typedef typename ft::__tree<pair, key_compare, Allocator>::iterator				iterator;
+			typedef typename ft::__tree<pair, key_compare, Allocator>::iterator				const_iterator;
 
 			// typedef ft::reverse_iterator<iterator>         	reverse_iterator;
 			// typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
 
-		class value_compare : public std::binary_function<value_type, value_type, bool>
+		class value_compare : public std::binary_function<pair, pair, bool>
 		{
 				friend class map;
 			protected:
 				key_compare comp;
 				value_compare(key_compare c) : comp(c) {}
 			public:
-				bool operator()(const value_type& x, const value_type& y) const {return comp(x.first, y.first);}
+				bool operator()(const pair& x, const pair& y) const {return comp(x.first, y.first);}
 		}; //value compare
 
 		private:
-			typedef value_type            	_value_type;
-			typedef _map_value_compare<key_type, _value_type, key_compare> _vc;
-			typedef __tree<value_type, _vc, allocator_type>   	_base;
+			typedef pair            	_pair;
+			typedef _map_value_compare<key_type, _pair, key_compare> _vc;
+			typedef __tree<pair, _vc, allocator_type>   	_base;
 			//typedef typename _base::_node_traits                _node_traits;
 
 			size_t 	_size;
 			_base _tree;
-
-
 							/********************************    COSTRUCTORS    ********************************/
 
 		public: 
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()){}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _size(0)
+		{ std::cout << "chiamato\n";}
 		template <class InputIterator>
 			map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type());
 		map(const map& m);
-		~map();
+		~map(){}
 		map& operator=(const map& m);
 
 							/********************************      ITERATOR     ********************************/
@@ -106,27 +106,19 @@ namespace ft
 
 							/********************************   ELEMENT ACCESS   ********************************/
 
-		mapped_type& 		operator[](const key_type& k);
-		mapped_type& 		at (const key_type& k);
-		const mapped_type& 	at (const key_type& k) const;
+		data_type& 		operator[](const key_type& k);
+		data_type& 		at (const key_type& k);
+		const data_type& 	at (const key_type& k) const;
 
 							/********************************   	MODIFIERS     ********************************/
 
-		std::pair<iterator, bool> 	insert(const value_type& v)
+		std::pair<iterator, bool> 	insert(const pair& v)
 		{
 			//mymap.insert ( std::pair<char,int>('a',100) );
-			iterator b;
-			b = begin();
-			while (true)
-			{
-				if (v.first < *b)
-				{
-					std::cout << "alalalal\n";
-				}
-			}
+			return _tree.insert(v);
 
 		}
-		iterator 					insert(const_iterator position, const value_type& v);
+		iterator 					insert(const_iterator position, const pair& v);
 		template <class InputIterator>
 			void 					insert(InputIterator first, InputIterator last);
 
