@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <memory>
-#include <__tree>
+//#include <__tree>
 #include "tree_algorithm.hpp"
 //#include <map>
 namespace ft
@@ -40,6 +40,7 @@ namespace ft
 			{
 				left = nullptr;
 				right = nullptr;
+				parent = nullptr;
 				is_black = false;
 			}
 			Node(T data) : key(data)
@@ -47,6 +48,8 @@ namespace ft
 				left = nullptr;
 				right = nullptr;
 				is_black = false;
+				parent = nullptr;
+
 			}
 			// Node* newNode(T data)
 			// {
@@ -126,21 +129,23 @@ public:
           value_compare& value_comp() { return __value_compare; }
     const value_compare& value_comp() const { return __value_compare; }
     _Node* __root() const { return end_node->left; }
-	__tree() : __size(0) 
+	__tree() : __size(0)
 	{
+		_Node* a = new _Node;
+		end_node = a;
 		begin_node =  __end_node();
 	}
     explicit __tree(const value_compare& __comp) : __size(0), __value_compare(__comp)
 	{
-		begin_node = __end_node();
+		__begin_node() = __end_node();
 	}
     explicit __tree(const allocator_type& __a) : __alloc(__a), __size(0)
 	{
-		begin_node = __end_node();
+		__begin_node() = __end_node();
 	}
     __tree(const value_compare& __comp, const allocator_type& __a) : __alloc(__a), __size(0), __value_compare(__comp)
 	{
-    	begin_node = __end_node();
+    	__begin_node() = __end_node();
 	}
     __tree(const __tree& __t) 
 	{} // da fare
@@ -211,7 +216,7 @@ public:
 
 	std::pair<iterator, bool> insert( const value_type& value ) //std::pair 
 	{
-		_Node *a = new _Node;
+		_Node *a = new _Node(value);
 		pointer _root = __root();
 		pointer x = nullptr;
 		bool inserted = false;
@@ -227,6 +232,7 @@ public:
 					else{
 						a->parent = x; //settiamo il nuovo parent a _root
 						x->left = a;
+						inserted = true;
 						break ;
 					}
 				}
@@ -238,6 +244,7 @@ public:
 					{
 						a->parent = x;
 						x->right = a;
+						inserted = true;
 						break ;
 					}
 				}
@@ -249,15 +256,13 @@ public:
 			}
 		}
 		else
-			a = __root();
-		pointer r = a;
-		if (a == nullptr)
 		{
-			a->insert(__root(), value);
-			balance_after_insert(__root(), a);
-			inserted = true;
-		
+			end_node->left = a;
+			a->parent = end_node;
+			a->is_black = true;
 		}
+		balance_after_insert(__root(), a);
+		pointer r = a;
 		std::pair<iterator,bool> miao;
 		return std::pair<iterator,bool>((iterator)r, inserted);
 		
