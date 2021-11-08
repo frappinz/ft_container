@@ -1,5 +1,4 @@
-#ifndef UTILS_HPP
-#define UTILS_HPP
+#pragma once
 
 #include <iostream>
 
@@ -236,6 +235,7 @@ namespace ft
 		__x->is_black = __x == __root; // x é nero se x é la root, altrimenti é rosso (soddisfa la condizione per cui la root é nera, altrimenti inseriamo a prescindere un nodo rosso)
 		while (__x != __root && !__x->parent->is_black)// questo é il caso in cui invece non abbiamo inserito la root, e quindi é tutto da bilanciare perché anche il genitore é rosso (non soddisfa la proprietá per cui i rossi devono avere figli neri)
 		{
+			std::cout << "Root quando inserisco { " << __x->key.first << " } é -> " << __root->key.first << std::endl;
 			// e il genitore non é manco root perché se la root é nera, quindi siamo in un subtree
 			if (is_left_child(__x->parent)) // se il genitore é un figlio sinistro
 			{
@@ -487,6 +487,5 @@ namespace ft
 			}
 		}
 	}
-}//namespace
 
-#endif
+}//namespace

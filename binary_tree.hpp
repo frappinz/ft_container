@@ -2,9 +2,9 @@
 
 #include <iostream>
 #include <memory>
-//#include <__tree>
+#include <__tree>
 #include "tree_algorithm.hpp"
-//#include <map>
+#include <map>
 namespace ft
 {
 
@@ -14,21 +14,6 @@ namespace ft
 		
 		
 	// /**********************  STRUTTURA NODI **********************/
-	// template<class T>
-	// struct Node
-	// {
-	// 	typedef struct Node* pointer;
-	// 	pointer left;
-	// 	pointer right;
-	// 	pointer parent;
-	// 	bool	__is_black;
-	// 	T		_data;
-
-	// }; //nodo
-
-
-
-// BST node
 	template <typename T>
 	class Node {
 		public:
@@ -41,48 +26,15 @@ namespace ft
 				left = nullptr;
 				right = nullptr;
 				parent = nullptr;
-				is_black = false;
+				is_black = true;
 			}
 			Node(T data) : key(data)
 			{
 				left = nullptr;
 				right = nullptr;
-				is_black = false;
+				is_black = true;
 				parent = nullptr;
 
-			}
-			// Node* newNode(T data)
-			// {
-			// 	Node* temp = new Node;
-			
-			// 	temp->key = data;
-			
-			// 	temp->left = NULL;
-			// 	temp->right = NULL;
-			
-			// 	return temp;
-			// }
-			Node* insert(Node* root, T data)
-			{
-				Node* newnode = new Node(data);
-				Node* x = root;
-				Node* y = NULL;
-				while (x != NULL) //se la root esiste
-				{
-					y = x; //y punta a root
-					if (key < x->key) //se nuovo nodo é minore della root
-						x = x->left; // ci spostiamo a sinistra
-					else
-						x = x->right;//altrimenti ci spostiamo a destra
-				}
-				if (y == NULL) // se é il primo nodo creato (root) entrerá qui
-					y = newnode;
-				else if (key < y->key)
-					y->left = newnode;
-				else
-					y->right = newnode;
-				newnode->parent = y;
-				return y;
 			}
 
 	};
@@ -92,7 +44,6 @@ namespace ft
 
 
 template <class _Tp, class _Compare, class Allocator >
-//<tp = pair, compare = key, pair, compare; allocator 
 class __tree
 {
 public:
@@ -118,8 +69,7 @@ private:
 	value_compare		__value_compare;
 
 public:
-    pointer __end_node() { return end_node; }
-   // Iterator __end_node() const { return __end_node; }
+    pointer 	__end_node() { return end_node; }
     Allocator& __node_alloc() {return __alloc; }
     const Allocator& __node_alloc() const {return __alloc;}
           iterator __begin_node() {return (iterator)begin_node;}
@@ -147,8 +97,7 @@ public:
 	{
     	__begin_node() = __end_node();
 	}
-    __tree(const __tree& __t) 
-	{} // da fare
+    __tree(const __tree& __t) { *this = __t; }
     __tree& operator=(const __tree& __t){
 		if (this != &__t)
 		{
@@ -161,27 +110,24 @@ public:
 			begin_node = __t.begin_node;
 			__size = __t.__size;
 		}
-	} // da fare
+	}
     ~__tree() {}
 
           iterator begin()  {return       iterator(__begin_node());}
     const_iterator begin() const {return const_iterator(__begin_node());}
-          iterator end() {return       iterator(__end_node());}
+          iterator end() {return      iterator(__end_node());}
     const_iterator end() const {return const_iterator(__end_node());}
 
     size_type max_size() const { return __alloc.max_size(); }
 
-    void clear()
-	{
+    void clear(){
 		__alloc.destroy(__root());
 		__size = 0;
-		begin_node = end_node;
+		__begin_node() = __end_node();
 		end_node->left = nullptr;
-		
 	}
 
-    void swap(__tree& __t)
-	{
+    void swap(__tree& __t){
     	std::swap(begin_node, __t.begin_node);
     	std::swap(end_node, __t.end_node);
     	std::swap(__alloc, __t.__alloc);
@@ -196,28 +142,72 @@ public:
 		else
 			__t.__end_node()->left->parent = static_cast<pointer>(__t.__end_node());
 	}
-    iterator erase(const_iterator __p)
-	{
+    void erase(const_iterator __p){
 		pointer __np = __p.__get_np();
 		iterator __r = __remove_node_pointer(__np);
 		Allocator& __na = __node_alloc();
 		__alloc.destroy(__na, __get_ptr(const_cast<pointer>(*__p)));
 		__alloc.deallocate(__na, __np, 1);
+	}
+
+    void erase(const_iterator __f, const_iterator __l){
+		while (__f != __l)
+			__f = erase(__f);
+
+	}
+
+	template <class _Key>
+	size_type erase(const _Key& __k)
+	{
+		std::pair<iterator, iterator> __p = __equal_range_multi(__k); // da cambiare!!
+		size_type __r = 0;
+		for (; __p.first != __p.second; ++__r)
+			__p.first = erase(__p.first);
 		return __r;
 	}
 
-    iterator erase(const_iterator __f, const_iterator __l)
+	template <class _Key>
+	pointer& __find_equal(pointer& __parent, const _Key& __v)
 	{
-		while (__f != __l)
-			__f = erase(__f);
-		return iterator(__l.__ptr_);
+		pointer __nd = __root();
+		if (__nd != nullptr)
+		{
+			while (true)
+			{
+				if (value_comp()(__v, __nd->key)) //se v é minore d
+				{
+					if (__nd->__left_ != nullptr) {
+						__nd = __nd->__left_;
+					} else {
+						__parent = __nd;
+						return __parent->__left_;
+					}
+				}
+				else if (value_comp()(__nd->key, __v))
+				{
+					if (__nd->__right_ != nullptr) {
+						__nd = __nd->__right_;
+					} else {
+						__parent = __nd;
+						return __nd->__right_;
+					}
+				}
+				else
+				{
+					__parent = __nd;
+					return *__nd;
+				}
+			}
+		}
+		__parent = __end_node();
+		return __parent->__left_;
 	}
 
-
-	std::pair<iterator, bool> insert( const value_type& value ) //std::pair 
+	std::pair<iterator, bool> insert( const value_type& value )
 	{
 		_Node *a = new _Node(value);
 		pointer _root = __root();
+		
 		pointer x = nullptr;
 		bool inserted = false;
 		if (_root != nullptr) //se root esiste
@@ -261,74 +251,256 @@ public:
 			a->parent = end_node;
 			a->is_black = true;
 		}
+		if (begin_node->left != nullptr)
+			begin_node = begin_node->left;
 		balance_after_insert(__root(), a);
+		__size++;
+		std::cout << "root é " << __root()->key.first << std::endl;
 		pointer r = a;
 		std::pair<iterator,bool> miao;
 		return std::pair<iterator,bool>((iterator)r, inserted);
-		
-
-		//value = std::pair<iterator,bool>;
-		// tree_min(end_node);
-		// _Node *a = new _Node;
-		// a->left = nullptr;
-		// a->right = nullptr;
-		// //_Node x = end_node;
-		// _Node *x = end_node.left; //stiamo alla root
-		// while (true)
-		// {
-		// 	if ((value.first, x->left) && x->left != nullptr)
-		// 		x = x->left;
-		// 	if (value.first > x->right && x->right != nullptr)
-		// 		x = x->right;
-		// 	break;
-		// }
-		// a->parent = x->parent;
-		// a->_key = value.first;
-		// a->_data = value.second;
-		// balance_after_insert(__root(), a);
-
-
-
-		
-		// std::pair<iterator,bool> la;
-		// return la;
 	}
+
+	template <class _Key>
+	pointer& __find_equal(const_iterator __hint, pointer& __parent, pointer& __dummy,
+                                                const _Key& __v)
+	{
+		if (__hint == end() || value_comp()(__v, *__hint))  // check before
+		{
+			// __v < *__hint
+			const_iterator __prior = __hint;
+			if (__prior == begin() || value_comp()(*--__prior, __v))
+			{
+				// *prev(__hint) < __v < *__hint
+				if (__hint.__ptr_->__left_ == nullptr)
+				{
+					__parent = __hint.__ptr_;
+					return __parent->__left_;
+				}
+				else
+				{
+					__parent = __prior.__ptr_;
+					return (__prior.__ptr_)->__right_;
+				}
+			}
+			// __v <= *prev(__hint)
+			return __find_equal(__parent, __v);
+		}
+		else if (value_comp()(*__hint, __v))  // check after
+		{
+			// *__hint < __v
+			const_iterator __next = _VSTD::next(__hint);
+			if (__next == end() || value_comp()(__v, *__next))
+			{
+				// *__hint < __v < *_VSTD::next(__hint)
+				if (__hint.__get_np()->__right_ == nullptr)
+				{
+					__parent = static_cast<pointer>(__hint.__ptr_);
+					return static_cast<pointer>(__hint.__ptr_)->__right_;
+				}
+				else
+				{
+					__parent = static_cast<pointer>(__next.__ptr_);
+					return __parent->__left_;
+				}
+			}
+			// *next(__hint) <= __v
+			return __find_equal(__parent, __v);
+		}
+		// else __v == *__hint
+		__parent = static_cast<pointer>(__hint.__ptr_);
+		__dummy = static_cast<pointer>(__hint.__ptr_);
+		return __dummy;
+	}
+
+
+
 	iterator insert( iterator hint, const value_type& value )
 	{
-		// parentpointer __parent;
-		// __node_base_pointer& __child = __find_leaf(__p, __parent, _NodeTypes::__get_key(__v));
-		// __node_holder __h = __construct_node(__v);
-		// __insert_node_at(__parent, __child, static_cast<__node_base_pointer>(__h.get()));
-		// return iterator(__h.release());
+		pointer	__parent;
+		pointer __dummy;
+		pointer& __child = __find_equal(hint.__ptr_, __parent, __dummy, value);
+		pointer __r = static_cast<pointer>(__child);
+		if (__child == nullptr)
+		{
+			_Node *a = new _Node(value);
+			a->parent = __parent;
+			if (begin_node->left != nullptr)
+				begin_node = begin_node->left;
+			balance_after_insert(__root(), a);
+			__size++;
+		}
+		return iterator(__r);
 	}
     //iterator find(const _Key& __v);
 
 
 	template <class key_type>
-	iterator 		find(const key_type& k); 
-	template <class key_type>
-	const_iterator 	find(const key_type& k) const;
+	iterator 		find(const key_type& k)
+	{
+		iterator p = lower_bound(k, __root(), __end_node());
+		if (p != end() && !value_comp()(k, *p))
+			return p;
+		return end();
+	}
 
 	template <class key_type>
-	size_type      	count(const key_type& k) const;
+	const_iterator 	find(const key_type& k) const
+	{
+		const_iterator p = lower_bound(k, __root(), __end_node());
+		if (p != end() && !value_comp()(k, *p))
+			return p;
+		return end();
+	}
 
 	template <class key_type>
-	iterator 		lower_bound(const key_type& k);
-	template <class key_type>
-	const_iterator 	lower_bound(const key_type& k) const;
-	template <class key_type>
-	iterator 		upper_bound(const key_type& k);
-	template <class key_type>
-	const_iterator 	upper_bound(const key_type& k) const;
+	size_type      	count(const key_type& k) const
+	{
+		pointer rt = __root();
+		while (rt != nullptr)
+		{
+			if (value_comp()(k, rt->key))
+			{
+				rt = static_cast<pointer>(rt->left);
+			}
+			else if (value_comp()(rt->key, k))
+				rt = static_cast<pointer>(rt->right);
+			else
+				return 1;
+		}
+		return 0;
+	}
 
 	template <class key_type>
-	std::pair<iterator,iterator>             equal_range(const key_type& k);
-	template <class key_type>
-	std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const;
+	iterator 		lower_bound(const key_type& k, pointer start, pointer result)
+	{
+		while (start != nullptr) // se la root esiste
+		{
+			if (!value_comp()(start->key, k)) //torna vero se root >= k, falso se root < k
+			{
+				result = start;
+				start = start->left;
+			}
+			else
+			{
+				start = start->right;
+			}
+		}
+		return iterator(result);
+	}
 
-    // template <class, class, class, class> friend class map;
-    // template <class, class, class, class> friend class multimap;
-	//template <class _Tp, class _Compare, class _Allocator>
+	template <class key_type>
+	const_iterator 	lower_bound(const key_type& k, pointer start, pointer result) const
+	{
+		while (start != nullptr) // se la root esiste
+		{
+			if (!value_comp()(start->key, k)) //torna vero se root >= k, falso se root < k
+			{
+				result = start;
+				start = start->left;
+			}
+			else
+			{
+				start = start->right;
+			}
+		}
+		return const_iterator(result);
+	}
+
+	template <class key_type>
+	iterator 		__lower_bound(const key_type& k)
+	{
+		pointer root = __root();
+		pointer result = __end_node();
+		return (iterator)lower_bound(k, root, result);
+	}
+
+	template <class key_type>
+	const_iterator 		__lower_bound(const key_type& k) const
+	{
+		pointer root = __root();
+		pointer result = __end_node();
+		return (const_iterator)lower_bound(k, root, result);
+	}
+	
+	template <class key_type>
+	iterator 		upper_bound(const key_type& k)
+	{
+		pointer root = __root();
+		pointer result = __end_node();
+		while (root != nullptr)
+		{
+			if (value_comp()(k, root->key))
+			{
+				result = root;
+				root = root->__left_;
+			}
+			else
+				root =root->__right_;
+		}
+		return iterator(result);
+	}
+
+	template <class key_type>
+	const_iterator 	upper_bound(const key_type& k) const
+	{
+		pointer root = __root();
+		pointer result = __end_node();
+		while (root != nullptr)
+		{
+			if (value_comp()(k, root->key))
+			{
+				result = root;
+				root = root->__left_;
+			}
+			else
+				root =root->__right_;
+		}
+		return const_iterator(result);
+	}
+
+	template <class key_type>
+	std::pair<iterator,iterator>             equal_range(const key_type& k)
+	{
+		typedef std::pair<iterator, iterator> _Pp;
+		pointer result = __end_node();
+		pointer root = __root();
+		while (root != nullptr)
+		{
+			if (value_comp()(k, root->key))
+			{
+				result = root;
+				root = root->left;
+			}
+			else if (value_comp()(root->key, k))
+				root = root->right;
+			else
+				return _Pp(lower_bound(k, root->left, root), upper_bound(k, root->righ, result));
+		}
+		return _Pp(iterator(result), iterator(result));
+	}
+
+	template <class key_type>
+	std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
+	{
+		typedef std::pair<const_iterator, const_iterator> _Pp;
+		pointer result = __end_node();
+		pointer root = __root();
+		while (root != nullptr)
+		{
+			if (value_comp()(k, root->key))
+			{
+				result = root;
+				root = root->left;
+			}
+			else if (value_comp()(root->key, k))
+				root = root->right;
+			else
+				return _Pp(lower_bound(k, root->left, root), upper_bound(k, root->righ, result));
+		}
+		return _Pp(const_iterator(result), const_iterator(result));
+	}
+
 	iterator __remove_node_pointer(pointer __ptr)
 	{
 		iterator __r(__ptr);
@@ -339,6 +511,7 @@ public:
 		__tree_remove(__end_node()->left, static_cast<pointer>(__ptr));
 		return __r;
 	}
+
 };
 
 
@@ -350,22 +523,18 @@ public:
 	template <class _Tp, class Iterator, class _DiffType>
 	class tree_iterator 
 	{
-		//class _tree;
-		typedef Iterator                                       	pointer;
+		typedef Iterator                                      	pointer;
 		pointer __ptr_;
 
 	public:
-		//struct Node;
-		//class _tree;
-		//typedef bidirectional_iterator_tag                     iterator_category;
 		typedef _Tp                                            value_type;
 		typedef _DiffType                                      difference_type;
 		typedef value_type&                                    reference;
 	
-		tree_iterator() : __ptr_() {}
-		reference operator*() const { return static_cast<reference>(*__ptr_); }  
-		pointer operator->() const { return __ptr_; }
-
+		tree_iterator() {}
+		reference operator*() const { return get_np()->key; }  
+		pointer operator->() const { return *(get_np()->key); }
+		pointer get_np() const { return static_cast<pointer>(__ptr_); }
 		tree_iterator& operator++() 
 		{ 
 			__ptr_ = static_cast<pointer>(next_iter(__ptr_));
