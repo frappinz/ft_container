@@ -3,21 +3,25 @@
 #include <iostream>
 #include <memory>
 #include <__tree>
+#include "map.hpp"
 #include "tree_algorithm.hpp"
+#include "utils.hpp"
 #include <map>
 namespace ft
 {
 
 
-	template <class _Tp, class _Compare, class _Allocator> class __tree;
+	template <class _Tp, class Node, class _Compare, class _Allocator> class __tree;
 	template <class _Tp, class Iterator, class _DiffType> class tree_iterator;
 		
 		
 	// /**********************  STRUTTURA NODI **********************/
-	template <typename T>
+	template <class T1, class T2> //std::pair <T1, T2 
 	class Node {
 		public:
-			T key;
+			ft::pair<T1, T2> _pair;
+			const T1 first;
+			T2 second;
 			class Node *left, *right;
 			class Node *parent;
 			bool is_black;
@@ -28,27 +32,52 @@ namespace ft
 				parent = nullptr;
 				is_black = true;
 			}
-			Node(T data) : key(data)
+			Node(T1 key, T2 data)
 			{
+				first = key;
+				second = data;
 				left = nullptr;
 				right = nullptr;
 				is_black = true;
 				parent = nullptr;
-
 			}
+			~Node(){}
 
 	};
 
 
+	template <class _Key, class _Tp>
+	struct __value_type
+	{
+			typedef _Key                                     key_type;
+			typedef _Tp                                      mapped_type;
+			typedef pair<const key_type, mapped_type>        value_type;
+
+		private:
+			value_type __cc;
+
+		public:
+			value_type& __get_value() { return __cc; }
+			const value_type& __get_value() const { return __cc; }
+
+		private:
+			__value_type();
+			__value_type(__value_type const&);
+			__value_type& operator=(__value_type const&);
+			~__value_type();
+	};
+
+
+
+
 /******************************** CLASSE TREE ********************************/
 
-
-template <class _Tp, class _Compare, class Allocator >
+template <class _Tp, class Node, class _Compare, class Allocator >
 class __tree
 {
 public:
-	//friend class map;
     typedef _Tp                                     	value_type;
+	typedef Node										_Node;
     typedef _Compare                                 	value_compare;
     typedef Allocator                               	allocator_type;
     typedef typename allocator_type::pointer         	pointer;
@@ -57,7 +86,7 @@ public:
     typedef typename allocator_type::difference_type 	difference_type;
     typedef tree_iterator<value_type, pointer, difference_type>            	iterator;
     typedef tree_iterator<value_type, const_pointer, difference_type> 		const_iterator;
-	typedef class Node <_Tp>							_Node;
+
 
 
 
@@ -87,15 +116,15 @@ public:
 	}
     explicit __tree(const value_compare& __comp) : __size(0), __value_compare(__comp)
 	{
-		__begin_node() = __end_node();
+		begin_node = __end_node();
 	}
     explicit __tree(const allocator_type& __a) : __alloc(__a), __size(0)
 	{
-		__begin_node() = __end_node();
+		begin_node = __end_node();
 	}
     __tree(const value_compare& __comp, const allocator_type& __a) : __alloc(__a), __size(0), __value_compare(__comp)
 	{
-    	__begin_node() = __end_node();
+    	begin_node = __end_node();
 	}
     __tree(const __tree& __t) { *this = __t; }
     __tree& operator=(const __tree& __t){
@@ -205,7 +234,7 @@ public:
 
 	std::pair<iterator, bool> insert( const value_type& value )
 	{
-		_Node *a = new _Node(value);
+		_Node *a = new _Node(value.first, value.second);
 		pointer _root = __root();
 		
 		pointer x = nullptr;
@@ -289,7 +318,7 @@ public:
 		else if (value_comp()(*__hint, __v))  // check after
 		{
 			// *__hint < __v
-			const_iterator __next = _VSTD::next(__hint);
+			const_iterator __next = __hint++;
 			if (__next == end() || value_comp()(__v, *__next))
 			{
 				// *__hint < __v < *_VSTD::next(__hint)
@@ -332,7 +361,6 @@ public:
 		}
 		return iterator(__r);
 	}
-    //iterator find(const _Key& __v);
 
 
 	template <class key_type>
@@ -523,8 +551,9 @@ public:
 	template <class _Tp, class Iterator, class _DiffType>
 	class tree_iterator 
 	{
-		typedef Iterator                                      	pointer;
-		pointer __ptr_;
+		typedef Iterator                                      	iterator;
+		iterator __ptr_;
+
 
 	public:
 		typedef _Tp                                            value_type;
@@ -532,10 +561,10 @@ public:
 		typedef value_type&                                    reference;
 	
 		tree_iterator() {}
-		reference operator*() const { return get_np()->key; }  
-		pointer operator->() const { return *(get_np()->key); }
-		pointer get_np() const { return static_cast<pointer>(__ptr_); }
-		tree_iterator& operator++() 
+		iterator get_np() const { return __ptr_; }
+		iterator operator*() const { return get_np()->key; }  
+		iterator operator->() const { return *(get_np()->key); }
+		tree_iterator& operator++()
 		{ 
 			__ptr_ = static_cast<pointer>(next_iter(__ptr_));
 			return *this;
