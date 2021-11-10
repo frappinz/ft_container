@@ -36,7 +36,7 @@ namespace ft
 	};
 
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<Node <const Key, T > > >
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<Node<pair<const Key, T> > > >
 	class map
 	{
 		public:
@@ -51,7 +51,7 @@ namespace ft
 
 		private:
 			typedef _map_value_compare<key_type, value_type, key_compare> _vc;
-			typedef Node<const key_type, data_type>							_Node;
+			typedef Node<value_type>							_Node;
 			typedef __tree<value_type, _Node, _vc, allocator_type>   	_base;
 
 			_base _tree;
@@ -61,10 +61,10 @@ namespace ft
 			typedef typename allocator_type::const_pointer   	const_pointer;
 			typedef typename allocator_type::size_type       	size_type;
 			typedef typename allocator_type::difference_type 	difference_type;
-			typedef ft::tree_iterator<value_type, pointer, difference_type>				iterator;
-			typedef ft::tree_iterator<value_type, const_pointer, difference_type>		const_iterator;
-			typedef ft::reverse_iterator<iterator>         	reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>    const_reverse_iterator;
+			typedef typename _base::iterator					iterator;
+			typedef typename _base::const_iterator				const_iterator;
+			typedef ft::reverse_iterator<iterator>         		reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>    	const_reverse_iterator;
 
 		class value_compare : public std::binary_function<value_type, value_type, bool>
 		{
@@ -156,11 +156,11 @@ namespace ft
 							/********************************   	MODIFIERS     ********************************/
 
 		pair<iterator, bool> 	insert(const value_type& v) { return _tree.insert(v); }
-		iterator 					insert(const_iterator position, const value_type& v) { return _tree.insert(position, v); }
+		iterator 					insert(iterator position, const value_type& v) { return _tree.insert(position, v); }
 		template <class InputIterator>
 			void 					insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
-				for (const_iterator i = end(); first != last; ++first)
+				for (iterator i = end(); first != last; ++first)
 					insert(i, *first);
 			}
 

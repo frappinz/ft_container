@@ -38,7 +38,7 @@ int main()
 	// std::cout << "lower bound = " << (*low).first << std::endl;
 	std::map<int, char>::iterator it;
 
-	tree.lower_bound(3)->first;
+	tree.lower_bound(3)->
 
 
 	std::vector<int> (3, 100);
