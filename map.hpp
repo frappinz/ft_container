@@ -92,7 +92,7 @@ namespace ft
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) : _tree(_vc(comp))
 		{
-			_tree.__node_alloc() = a;
+			_tree.get_alloc() = a;
 			insert(first, last);
 		}
 		map(const map& m) : _tree(m._tree) { insert(m.begin(), m.end()); }
@@ -112,7 +112,7 @@ namespace ft
 							/********************************      ITERATOR     ********************************/
 
 		iterator 		begin(){ return (iterator)_tree.begin(); }
-		const_iterator 	begin() const { return (const_iterator)_tree.begin(); }
+		const_iterator 	begin() const { return (const_iterator)_tree.cbegin(); }
 		iterator 		end(){	return (iterator)_tree.end();}
 		const_iterator 	end()   const {	return (const_iterator)_tree.end();}
 
@@ -134,23 +134,12 @@ namespace ft
 		{
 			iterator i = find(k);
 			if (i != end())
-				return i->get_np().second;
-			insert(i, k);
-			return k->second;
-		}
-		data_type& 		at (const key_type& k)
-		{
-			iterator i = find(k);
-			if (i == end())
-				throw(out_of_range("map::at: key not found"));
-			return k->second;
-		}
-		const data_type& 	at (const key_type& k) const
-		{
-			iterator i = find(k);
-			if (i == end())
-				throw(out_of_range("map::at: key not found"));
-			return k->second;
+				return (*i).second;
+			const std::pair<const key_type, data_type> miao;
+			data_type d;
+
+			_tree.insert(i, miao);
+			return (*i).second;
 		}
 
 							/********************************   	MODIFIERS     ********************************/
@@ -183,8 +172,8 @@ namespace ft
 
 		size_type      	count(const key_type& k) const { return _tree.count(k); }
 
-		iterator 		lower_bound(const key_type& k) { return (iterator)_tree.__lower_bound(k); }
-		const_iterator 	lower_bound(const key_type& k) const { return (const_iterator)_tree.__lower_bound(k); }
+		iterator 		lower_bound(const key_type& k) { return (iterator)_tree.lower_bound(k); }
+		const_iterator 	lower_bound(const key_type& k) const { return (const_iterator)_tree.lower_bound(k); }
 
 		iterator 		upper_bound(const key_type& k) { return _tree.upper_bound(k); }
 		const_iterator 	upper_bound(const key_type& k) const { return _tree.upper_bound(k); }
