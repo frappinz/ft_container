@@ -36,13 +36,13 @@ namespace ft
 	};
 
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<Node<pair<const Key, T> > > >
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<pair<const Key, T> > > 
 	class map
 	{
 		public:
 			typedef Key                                      	key_type;
-			typedef T                                        	data_type;
-			typedef pair<const key_type, data_type>   			value_type;
+			typedef T                                        	mapped_type;
+			typedef pair<const key_type, mapped_type>   		value_type;
 			typedef Compare                                  	key_compare;
 			typedef Allocator                                	allocator_type;
 			typedef value_type&       							reference;
@@ -51,10 +51,10 @@ namespace ft
 
 		private:
 			typedef _map_value_compare<key_type, value_type, key_compare> _vc;
-			typedef Node<value_type>							_Node;
-			typedef __tree<value_type, _Node, _vc, allocator_type>   	_base;
+			typedef __tree<value_type, _vc>   	_base;
 
-			_base _tree;
+			allocator_type			alloc;
+			_base 					_tree;
 		public:
 			/****************** MEMBER TYPES ******************/
 			typedef typename allocator_type::pointer         	pointer;
@@ -87,7 +87,7 @@ namespace ft
 							/********************************    COSTRUCTORS    ********************************/
 
 		public: 
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(_vc(comp)), _base::allocator_type(alloc) {}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(_vc(comp), allocator_type(alloc)) {}
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) : _tree(_vc(comp))
@@ -111,10 +111,10 @@ namespace ft
 
 							/********************************      ITERATOR     ********************************/
 
-		iterator 		begin(){ return (iterator)_tree.begin(); }
+		iterator 		begin()	{ return (iterator)_tree.begin(); }
 		const_iterator 	begin() const { return (const_iterator)_tree.cbegin(); }
 		iterator 		end(){	return (iterator)_tree.end();}
-		const_iterator 	end()   const {	return (const_iterator)_tree.end();}
+		const_iterator 	end()   const {	return (const_iterator)_tree.cend();}
 
 		reverse_iterator 		rbegin() { return (reverse_iterator(_tree.end())); }
 		const_reverse_iterator 	rbegin() const { return (const_reverse_iterator(_tree.end())); }
@@ -130,15 +130,15 @@ namespace ft
 
 							/********************************   ELEMENT ACCESS   ********************************/
 
-		data_type& 		operator[](const key_type& k)
+		mapped_type& 		operator[](const key_type& k)
 		{
 			iterator i = find(k);
 			if (i != end())
 				return (*i).second;
-			const std::pair<const key_type, data_type> miao;
-			data_type d;
-
-			_tree.insert(i, miao);
+			const ft::pair<const key_type, mapped_type> miao;
+			bool inser;
+			ft::pair<iterator, bool> ciao (i, inser);
+			ciao = _tree.insert(miao);
 			return (*i).second;
 		}
 
@@ -162,8 +162,8 @@ namespace ft
 							/********************************   	OBSERVER    ********************************/
 
 		allocator_type get_allocator() const { return _tree.__node_alloc(); }
-		key_compare    key_comp()      const { return key_comp(); }
-		value_compare  value_comp()    const { return _tree.value_comp(); }
+		key_compare    key_comp()      const { return _tree.value_comp().key_comp(); }
+		value_compare  value_comp()    const { return value_compare(_tree.value_comp().key_comp()); }
 
 							/********************************    MAP OPERATIONS   ********************************/
 
