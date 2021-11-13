@@ -110,7 +110,7 @@ namespace ft
 	// Ritorna: puntatore al nodo piú a destra sotto _x
 	// Condizione di partenza : _x != nullptr.
 	template <class _NodePtr>
-	_NodePtr __tree_max(_NodePtr __x)
+	_NodePtr tree_max(_NodePtr __x)
 	{
 		while (__x->right != nullptr)
 			__x = __x->right;
@@ -121,7 +121,7 @@ namespace ft
 	// Ritorna: puntatore al prossimo nodo in ordine di grandezza dopo _x.
 	// Condizione di partenza : _x != nullptr.
 	template <class _NodePtr>
-	_NodePtr __tree_next(_NodePtr __x)
+	_NodePtr tree_next(_NodePtr __x)
 	{
 		if (__x->right != nullptr)
 			return tree_min(__x->right);
@@ -144,11 +144,11 @@ namespace ft
 	// Ritorna: puntatore al nodo piú piccolo prima di _x
 	// Condizione di partenza : _x != nullptr.
 	// Nota: _x potrebbe essere _root->parent
-	template <class _NodePtr, class _EndNodePtr>
-	_NodePtr prev_iter(_EndNodePtr __x)
+	template <class _NodePtr>
+	_NodePtr prev_iter(_NodePtr __x)
 	{
 		if (__x->left != nullptr)
-			return __tree_max(__x->left);
+			return tree_max(__x->left);
 		_NodePtr __xx = static_cast<_NodePtr>(__x);
 		while (is_left_child(__xx))
 			__xx = __xx->parent;
@@ -303,14 +303,14 @@ namespace ft
 
 	template <class _NodePtr>
 	void
-	__tree_remove(_NodePtr __root, _NodePtr __z)
+	tree_remove(_NodePtr __root, _NodePtr __z)
 	{
 		// __z will be removed from the tree.  Client still needs to destruct/deallocate it
 		// __y is either __z, or if __z has two children, __tree_next(__z).
 		// __y will have at most one child.
 		// __y will be the initial hole in the tree (make the hole at a leaf)
 		_NodePtr __y = (__z->left == nullptr || __z->right == nullptr) ?
-						__z : __tree_next(__z);
+						__z : tree_next(__z);
 		// __x is __y's possibly null single child
 		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;
 		// __w is __x's possibly null uncle (will become __x's sibling)
@@ -344,10 +344,10 @@ namespace ft
 			else
 				__y->parent->right = __y;
 			__y->left = __z->left;
-			__y->left->__set_parent(__y);
+			__y->left->parent = __y;
 			__y->right = __z->right;
 			if (__y->right != nullptr)
-				__y->right->__set_parent(__y);
+				__y->right->parent = __y;
 			__y->is_black = __z->is_black;
 			if (__root == __z)
 				__root = __y;

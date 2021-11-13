@@ -68,8 +68,12 @@ public:
     typedef typename allocator_type::difference_type 	difference_type;
 	typedef typename allocator_type::reference			reference;
 	typedef typename allocator_type::const_reference	const_reference;
-    typedef ft::tree_iterator<_Tp>            		iterator;
-    typedef ft::const_tree_iterator<_Tp> 			const_iterator;
+    typedef ft::tree_iterator<_Tp>            			iterator;
+    typedef ft::const_tree_iterator<_Tp> 				const_iterator;
+	typedef ft::tree_reverse_iterator<_Tp>				reverse_iterator;
+	typedef ft::const_tree_reverse_iterator<_Tp>		const_reverse_iterator;
+
+
 
 
 
@@ -117,7 +121,7 @@ public:
     __tree& operator=(const __tree& __t){
 		if (this != &__t)
 		{
-			_value_compare = __t.value_compare();
+			_value_compare = __t.value_comp();
 			if (_alloc != __t._alloc)
 				clear();
 			else
@@ -126,13 +130,14 @@ public:
 			_begin_node = __t._begin_node;
 			_size = __t._size;
 		}
+		return *this;
 	}
     ~__tree() {}
 
 
-          iterator begin()  {return       iterator(_begin_node);}
+          iterator begin() const {return       iterator(_begin_node);}
     const_iterator cbegin() const {return const_iterator(_begin_node);}
-          iterator end() {return      iterator(_end_node);}
+          iterator end() const {return      iterator(_end_node);}
     const_iterator cend() const {return const_iterator(_end_node);}
 
     size_type max_size() const { return _alloc.max_size(); }
@@ -140,7 +145,7 @@ public:
     void clear(){
 		_alloc.destroy(get_root());
 		_size = 0;
-		get_begin_node() = get_end_node();
+		_begin_node = _end_node;
 		_end_node->left = nullptr;
 	}
 
@@ -151,35 +156,34 @@ public:
     	std::swap(_size, __t._size);
 		std::swap(_value_compare, __t._value_compare);
     	if (size() == 0)
-			get_begin_node() = get_end_node();
+			_begin_node = _end_node;
 		else
 			get_end_node()->left->parent = static_cast<nodeptr>(get_end_node());
 		if (__t.size() == 0)
-			__t.get_begin_node() = __t.get_end_node();
+			__t._begin_node = __t.get_end_node();
 		else
 			__t.get_end_node()->left->parent = static_cast<nodeptr>(__t.get_end_node());
 	}
-    void erase(const_iterator __p){
-		nodeptr __np = __p.base();
+    void erase_position(iterator __p){
+		pointer __np = __p.base();
 		iterator __r = __remove_node_nodeptr(__np);
-		Allocator& __na = get_alloc();
-		_alloc.destroy(__na, __get_ptr(const_cast<nodeptr>(*__p)));
-		_alloc.deallocate(__na, __np, 1);
+		_alloc.destroy(__p.base());
+		_alloc.deallocate(__np, 1);
 	}
 
-    void erase(const_iterator __f, const_iterator __l){
-		while (__f != __l)
-			__f = erase(__f);
+    void erase_range(iterator __f, iterator __l){
+		for (; __f != __l; ++__f)
+			erase_position(__f);
 
 	}
 
 	template <class _Key>
-	size_type erase(const _Key& __k)
+	size_type erase_key(const _Key& __k)
 	{
-		ft::pair<iterator, iterator> __p = __equal_range_multi(__k); // da cambiare!!
+		ft::pair<iterator, iterator> __p = equal_range(__k); // da cambiare!!
 		size_type __r = 0;
 		for (; __p.first != __p.second; ++__r)
-			__p.first = erase(__p.first);
+			erase_position(__p.first);
 		return __r;
 	}
 
@@ -326,7 +330,7 @@ public:
 	template <class key_type>
 	const_iterator 	find(const key_type& k) const
 	{
-		const_iterator p = lower_bound(k, get_root(), get_end_node());
+		const_iterator p = __lower_bound(k, get_root(), get_end_node());
 		if (p != end() && !value_comp()(k, *p))
 			return p;
 		return end();
@@ -513,14 +517,14 @@ public:
 		return _Pp(const_iterator(result), const_iterator(result));
 	}
 
-	iterator __remove_node_nodeptr(nodeptr __ptr)
+	iterator __remove_node_nodeptr(pointer __ptr)
 	{
 		iterator __r(__ptr);
 		++__r;
 		if (get_begin_node() == __ptr)
-			get_begin_node() = __r.current;
-		--size();
-		__tree_remove(get_end_node()->left, static_cast<nodeptr>(__ptr));
+			_begin_node = __r.base();
+		--_size;
+		tree_remove(get_end_node()->left, static_cast<nodeptr>(__ptr));
 		return __r;
 	}
 

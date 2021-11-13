@@ -63,8 +63,8 @@ namespace ft
 			typedef typename allocator_type::difference_type 	difference_type;
 			typedef typename _base::iterator					iterator;
 			typedef typename _base::const_iterator				const_iterator;
-			typedef ft::reverse_iterator<iterator>         		reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>    	const_reverse_iterator;
+			typedef typename _base::reverse_iterator			reverse_iterator;
+			typedef typename _base::const_reverse_iterator		const_reverse_iterator;
 
 		class value_compare : public std::binary_function<value_type, value_type, bool>
 		{
@@ -103,7 +103,7 @@ namespace ft
 			{
 				_tree.clear();
 				_tree.value_comp() = m._tree.value_comp();
-				_tree.__node_alloc() = m._tree.__node_alloc();
+				_tree.get_alloc() = m._tree.get_alloc();
 				insert(m.begin(), m.end());
 			}
 			return *this;
@@ -117,9 +117,9 @@ namespace ft
 		const_iterator 	end()   const {	return (const_iterator)_tree.cend();}
 
 		reverse_iterator 		rbegin() { return (reverse_iterator(_tree.end())); }
-		const_reverse_iterator 	rbegin() const { return (const_reverse_iterator(_tree.end())); }
+		const_reverse_iterator 	rbegin() const { return (const_reverse_iterator(_tree.cend())); }
 		reverse_iterator 		rend() 	{ return (reverse_iterator(_tree.begin())); }
-		const_reverse_iterator	rend()   const { return (const_reverse_iterator(_tree.begin())); }
+		const_reverse_iterator	rend()   const { return (const_reverse_iterator(_tree.cbegin())); }
 
 
 							/********************************      CAPACITY     ********************************/
@@ -153,11 +153,11 @@ namespace ft
 					insert(i, *first);
 			}
 
-		void		erase(iterator position) { return _tree.erase(position); }
-		size_type 	erase(const key_type& k) { return _tree.erase(k); }
-		void		erase(iterator first, iterator last) { return _tree.erase(first, last); }
+		void		erase(iterator position) { _tree.erase_position(position); }
+		size_type 	erase(const key_type& k) { return _tree.erase_key(k); }
+		void		erase(iterator first, iterator last) { _tree.erase_range(first, last); }
 		void 		clear() { return _tree.clear(); }
-		void 		swap (map& x) { return _tree.swap(x); }
+		void 		swap (map& x) { return _tree.swap(x._tree); }
 
 							/********************************   	OBSERVER    ********************************/
 
@@ -186,19 +186,19 @@ namespace ft
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool
-	operator==(const map<Key, T, Compare, Allocator>& x,
-			const map<Key, T, Compare, Allocator>& y)
+	operator< (const map<Key, T, Compare, Allocator>& x, const map<Key, T, Compare, Allocator>& y)
 	{
-   		return x.size() == y.size() && (!ft::lexicographical_compare(x.begin(), x.end(), y.begin()));
+    	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
 	}
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool
-	operator< (const map<Key, T, Compare, Allocator>& x,
+	operator==(const map<Key, T, Compare, Allocator>& x,
 			const map<Key, T, Compare, Allocator>& y)
 	{
-    	return ft::lexicographical_compare(x.begin(), x.end(), y.begin(), y.end());
+   		return x.size() == y.size() && !(x<y) && !(y<x);
 	}
+
 
 	template <class Key, class T, class Compare, class Allocator>
 	bool
