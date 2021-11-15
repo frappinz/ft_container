@@ -207,8 +207,11 @@ namespace ft
 				for (size_t i = 0; i < _size; i++)
 						_alloc.construct((tmp + i), _begin[i]);
 				_alloc.deallocate(_begin, _capacity);
+				_begin = _alloc.allocate(n);
+				for (size_t i = 0; i < _size; i++)
+						_alloc.construct((_begin + i), tmp[i]);
 				_capacity = n;
-				_begin = tmp;
+				_alloc.deallocate(tmp, n);
 			}
 			else if (_begin == nullptr)
 			{
@@ -297,7 +300,7 @@ namespace ft
 		iterator insert (iterator position, const value_type& val)
 		{
 			size_t pos = 0;
-			for (iterator it = begin(); it != position; ++it)
+			for (iterator it = begin(); it != position; it++)
 				pos++;
 			if (_size+1 > _capacity)
 			 	reserve((_size + 1)*2);
@@ -309,7 +312,11 @@ namespace ft
 				iter--;
 			}
 			_begin[pos] = val;
-			return (position);
+			size_t index = 0;
+			iterator i = begin();
+			for (; index != pos; i++)
+				index++;
+			return (i);
 		}
 		
 		void insert (iterator position, size_type n, const value_type& val)
