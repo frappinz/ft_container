@@ -51,7 +51,7 @@ namespace ft
 	template <class _Tp> //pair
 	class tree_iterator 
 	{
-		typedef class Node<_Tp>		_Node;
+		typedef class  Node<_Tp>		_Node;
 		typedef _Node*				nodeptr;
 		nodeptr 					current;
 	public:

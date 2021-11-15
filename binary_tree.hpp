@@ -15,39 +15,21 @@ namespace ft
 	template <class _Tp, class _Compare, class _Allocator> class __tree;
 	template <class _Tp> class tree_iterator;
 	template <class _Tp> class const_tree_iterator;
-	template <class T> class Node;
+	template <typename T> class Node;
 		
 	// /**********************  STRUTTURA NODI **********************/
 	
-	template <class T> //std::pair <T1, T2 
+	template <typename T> //std::pair <T1, T2 
 	class Node {
-		public:
-			//ft::pair<T1, T2> _pair
-			T pair;
-			// T1 first;
-			// T2 second;
-			class Node *left, *right;
-			class Node *parent;
-			bool is_black;
-			Node(): left(nullptr), right(nullptr), parent(nullptr), is_black(true)
-			{
-				// first = NULL;
-				// second = NULL;
-				// left = nullptr;
-				// right = nullptr;
-				// parent = nullptr;
-				// is_black = true;
-			}
-			Node(T _pair) : pair(_pair), left(nullptr), right(nullptr), parent(nullptr), is_black(true)
-			{
-				// left = nullptr;
-				// right = nullptr;
-				// is_black = true;
-				// parent = nullptr;
-			}
-			~Node(){}
+			public:
+				T pair;
+				class Node *left, *right;
+				class Node *parent;
+				bool is_black;
+				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
+				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
+			};
 
-	};
 
 
 
@@ -79,6 +61,7 @@ public:
 
 
 private:
+	nodeptr				root;
     nodeptr         	_begin_node; //punta sempre al nodo con la chiave piú piccola
 	nodeptr				_end_node; //genitore di root
 	Allocator			_alloc;
@@ -96,27 +79,41 @@ public:
     const size_type& size() const { return _size; }
     		value_compare& value_comp() { return _value_compare; }
     const	value_compare& value_comp() const { return _value_compare; }
-   	nodeptr get_root() const { return _end_node->left; }
+   	nodeptr get_root() const { return root; }
 
 	__tree() : _size(0)
 	{
-		_Node* a;
-		a = _alloc.allocate(1);
-		_end_node = a;
-		_begin_node =  get_end_node();
+		//root = _alloc.allocate(1);
+		root = nullptr;
+		_begin_node = _alloc.allocate(1);
+		_end_node = _alloc.allocate(1);
+		_begin_node = _end_node;
 	}
     explicit __tree(const value_compare& __comp) : _size(0), _value_compare(__comp)
 	{
-		_begin_node = get_end_node();
+		//root = _alloc.allocate(1);
+		root = nullptr;
+		_begin_node = _alloc.allocate(1);
+		_end_node = _alloc.allocate(1);
+		_begin_node = _end_node;
 	}
     explicit __tree(const allocator_type& __a) : _alloc(__a), _size(0)
 	{
-		_begin_node = get_end_node();
+		//root = _alloc.allocate(1);
+		root = nullptr;
+		_begin_node = _alloc.allocate(1);
+		_end_node = _alloc.allocate(1);
+		_begin_node = _end_node;
 	}
     __tree(const value_compare& __comp, const allocator_type& __a) : _alloc(__a), _size(0), _value_compare(__comp)
 	{
-    	_begin_node = get_end_node();
+		///root = _alloc.allocate(1);
+		root = nullptr;
+		_begin_node = _alloc.allocate(1);
+		_end_node = _alloc.allocate(1);
+		_begin_node = _end_node;
 	}
+
     __tree(const __tree& __t) { *this = __t; }
     __tree& operator=(const __tree& __t){
 		if (this != &__t)
@@ -141,6 +138,17 @@ public:
     const_iterator cend() const {return const_iterator(_end_node);}
 
     size_type max_size() const { return _alloc.max_size(); }
+
+
+
+
+
+	_Node *newnode ()
+	{
+		_Node *a = _alloc.allocate(1);
+		_alloc.construct(a);
+		return a;
+	}
 
     void clear(){
 		_alloc.destroy(get_root());
@@ -187,13 +195,13 @@ public:
 		return __r;
 	}
 
-	ft::pair<iterator, bool> insert( const value_type& value )
+	ft::pair<iterator, bool> insert(const value_type& value )
 	{
 		nodeptr _root = get_root();
 		nodeptr x = nullptr;
-		nodeptr newnode = nullptr;
+		nodeptr nuovo = nullptr;
 		bool inserted = false;
-		if (_root != nullptr) //se root esiste
+		if (_root != nullptr && _size != 0) //se root esiste
 		{
 			x = _root;//puntiamo x a root
 			while (true)
@@ -203,11 +211,11 @@ public:
 					if (x->left != nullptr) //se esiste un figlio di sinistra
 						x = x->left;//ci spostiamo
 					else{
-						newnode = x->left;
-						newnode = _alloc.allocate(sizeof(_Node)); 
-						_alloc.construct(newnode, _Node(value));
-						newnode->parent = x;
-						x->left = newnode;
+						nuovo = x->left;
+						nuovo = _alloc.allocate(sizeof(_Node)); 
+						//_alloc.construct(newnode, _Node(value));
+						nuovo->parent = x;
+						x->left = nuovo;
 						inserted = true;
 						break ;
 					}
@@ -218,37 +226,44 @@ public:
 						x = x->right;
 					else
 					{
-						newnode = x->right;
-						newnode = _alloc.allocate(sizeof(_Node)); 
-						_alloc.construct(newnode, _Node(value));
-						newnode->parent = x;
-						x->right = newnode;
+						_Node n(value);
+						nuovo = newnode();
+						nuovo = &n;
+						x->right = nuovo;
+						nuovo->parent = x;
 						inserted = true;
 						break ;
 					}
 				}
 				else//se troviamo un'uguaglianza sostituiamo il data
 				{
-					newnode = x;
-					newnode->pair.second = value.second;
+					nuovo = x;
+					nuovo->pair.second = value.second;
 					break ;
 				}
 			}
 		}
-		else
+		else 						// É L'UNICO CHE FORSE FUNZIONA!!! 
 		{
-			newnode = _root;
-			newnode = _alloc.allocate(sizeof(_Node)); 
-			_alloc.construct(newnode, _Node(value));
-			_end_node->left = newnode;
-			newnode->parent = _end_node;
-			newnode->is_black = true;
+			_Node nuovo(value);
+			root = newnode();
+			root = &nuovo;
+			nodeptr r = root;
+			_size++;
+			_begin_node = root;
+			_end_node = root;
+			return ft::pair<iterator,bool>((iterator)r, inserted);
 		}
 		if (_begin_node->left != nullptr)
 			_begin_node = _begin_node->left;
-		balance_after_insert(get_root(), newnode);
-		_size++;
-		nodeptr r = newnode;
+		if (_end_node->right != nullptr)
+			_end_node = _end_node->right;
+		if (inserted == true)
+		{
+			balance_after_insert(get_root(), nuovo);
+			_size++;
+		}
+		nodeptr r = nuovo;
 		ft::pair<iterator,bool> miao;
 		return ft::pair<iterator,bool>((iterator)r, inserted);
 	}
@@ -261,13 +276,13 @@ public:
 		{
 			if (hint.base()->left == nullptr) // e non ha figli di sinistra
 			{
-				_Node *newnode = _alloc.allocate(1);
-				_alloc.construct(newnode);
-				hint.base()->left = newnode;
-				newnode->parent = hint.base();
+				_Node *nuovo = _alloc.allocate(1);
+				_alloc.construct(nuovo);
+				hint.base()->left = nuovo;
+				nuovo->parent = hint.base();
 				_size++;
-				balance_after_insert(get_root(), newnode);
-				return (iterator)newnode;
+				balance_after_insert(get_root(), nuovo);
+				return (iterator)nuovo;
 			}
 			else
 				miao = insert(value);
@@ -276,14 +291,14 @@ public:
 		{
 			if (hint.base()->right == nullptr) // e non ha figli di sinistra
 			{
-				_Node *newnode = _alloc.allocate(1);
-				newnode = _alloc.allocate(sizeof(_Node));
-				_alloc.construct(newnode, _Node(value));
-				hint.base()->right = newnode;
-				newnode->parent = hint.base();
+				_Node *nuovo = _alloc.allocate(1);
+				nuovo = _alloc.allocate(sizeof(_Node));
+				//_alloc.construct(newnode;
+				hint.base()->right = nuovo;
+				nuovo->parent = hint.base();
 				_size++;
-				balance_after_insert(get_root(), newnode);
-				return (iterator)newnode;
+				balance_after_insert(get_root(), nuovo);
+				return (iterator)nuovo;
 			}
 			else
 				miao = insert(value);

@@ -87,19 +87,20 @@ namespace ft
 							/********************************    COSTRUCTORS    ********************************/
 
 		public: 
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _tree(_vc(comp), allocator_type(alloc)) {}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) 
+			: _tree(_vc(comp), typename _base::allocator_type(alloc)) {}
 
 		template <class InputIterator>
-		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) : _tree(_vc(comp))
+		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) 
+			:	_tree(_vc(comp), typename _base::allocator_type(a))
 		{
-			_tree.get_alloc() = a;
 			insert(first, last);
 		}
 		map(const map& m) : _tree(m._tree) { insert(m.begin(), m.end()); }
 		~map(){}
 		map& operator=(const map& m)
 		{
-			if (this != &m)
+			if (this != &m) 
 			{
 				_tree.clear();
 				_tree.value_comp() = m._tree.value_comp();
@@ -149,8 +150,8 @@ namespace ft
 		template <class InputIterator>
 			void 					insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
-				for (iterator i = end(); first != last; ++first)
-					insert(i, *first);
+				for (; first != last; ++first)
+					insert(*first);
 			}
 
 		void		erase(iterator position) { _tree.erase_position(position); }
