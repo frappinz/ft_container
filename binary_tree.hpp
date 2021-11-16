@@ -28,6 +28,7 @@ namespace ft
 				bool is_black;
 				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
 				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
+				~Node(){}
 			};
 
 
@@ -80,6 +81,12 @@ public:
     		value_compare& value_comp() { return _value_compare; }
     const	value_compare& value_comp() const { return _value_compare; }
    	nodeptr get_root() const { return root; }
+	void	set_root(nodeptr x) { root = x; }
+	void	find_new_root(nodeptr x) {
+		while (x->parent != nullptr)
+			x = x->parent;
+		root = x;
+	}
 
 	__tree() : _size(0)
 	{
@@ -142,11 +149,12 @@ public:
 
 
 
-
-	_Node *newnode ()
+	template <class U>
+	_Node *newnode (U& value)
 	{
 		_Node *a = _alloc.allocate(1);
-		_alloc.construct(a);
+		_Node n(value);
+		_alloc.construct(a, n);
 		return a;
 	}
 
@@ -195,7 +203,7 @@ public:
 		return __r;
 	}
 
-	ft::pair<iterator, bool> insert(const value_type& value )
+	ft::pair<iterator, bool> insert(value_type value )
 	{
 		nodeptr _root = get_root();
 		nodeptr x = nullptr;
@@ -211,9 +219,7 @@ public:
 					if (x->left != nullptr) //se esiste un figlio di sinistra
 						x = x->left;//ci spostiamo
 					else{
-						nuovo = x->left;
-						nuovo = _alloc.allocate(sizeof(_Node)); 
-						//_alloc.construct(newnode, _Node(value));
+						nuovo = newnode(value);
 						nuovo->parent = x;
 						x->left = nuovo;
 						inserted = true;
@@ -226,28 +232,23 @@ public:
 						x = x->right;
 					else
 					{
-						_Node n(value);
-						nuovo = newnode();
-						nuovo = &n;
-						x->right = nuovo;
+						nuovo = newnode(value);
 						nuovo->parent = x;
+						x->right = nuovo;
 						inserted = true;
 						break ;
 					}
 				}
 				else//se troviamo un'uguaglianza sostituiamo il data
 				{
-					nuovo = x;
-					nuovo->pair.second = value.second;
+					x->pair.second = value.second;
 					break ;
 				}
 			}
 		}
 		else 						// É L'UNICO CHE FORSE FUNZIONA!!! 
 		{
-			_Node nuovo(value);
-			root = newnode();
-			root = &nuovo;
+			root = newnode(value);
 			nodeptr r = root;
 			_size++;
 			_begin_node = root;
@@ -261,10 +262,10 @@ public:
 		if (inserted == true)
 		{
 			balance_after_insert(get_root(), nuovo);
+			find_new_root(nuovo);
 			_size++;
 		}
 		nodeptr r = nuovo;
-		ft::pair<iterator,bool> miao;
 		return ft::pair<iterator,bool>((iterator)r, inserted);
 	}
 
@@ -282,6 +283,7 @@ public:
 				nuovo->parent = hint.base();
 				_size++;
 				balance_after_insert(get_root(), nuovo);
+				find_new_root(nuovo);
 				return (iterator)nuovo;
 			}
 			else
@@ -298,6 +300,7 @@ public:
 				nuovo->parent = hint.base();
 				_size++;
 				balance_after_insert(get_root(), nuovo);
+				find_new_root(nuovo);
 				return (iterator)nuovo;
 			}
 			else
