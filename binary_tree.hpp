@@ -57,10 +57,8 @@ public:
 	typedef ft::const_tree_reverse_iterator<_Tp>		const_reverse_iterator;
 
 
-
-
-
-
+// 384307168202282325
+// 461168601842738790
 private:
 	nodeptr				root;
     nodeptr         	_begin_node; //punta sempre al nodo con la chiave piú piccola
@@ -141,8 +139,8 @@ public:
 
           iterator begin() const {return       iterator(_begin_node);}
     const_iterator cbegin() const {return const_iterator(_begin_node);}
-          iterator end() const {return      iterator(_end_node);}
-    const_iterator cend() const {return const_iterator(_end_node);}
+          iterator end() const {return      iterator(_end_node->right);}
+    const_iterator cend() const {return const_iterator(_end_node->right);}
 
     size_type max_size() const { return _alloc.max_size(); }
 
@@ -203,7 +201,7 @@ public:
 		return __r;
 	}
 
-	ft::pair<iterator, bool> insert(value_type value )
+	ft::pair<iterator, bool> insert(const value_type& value )
 	{
 		nodeptr _root = get_root();
 		nodeptr x = nullptr;
@@ -273,12 +271,13 @@ public:
 	iterator insert( iterator hint, const value_type& value )
 	{
 		ft::pair<iterator, bool> miao;
-		if(value_comp()(value, *hint)) // se la nuova key é minore della key nell'iteratore consigliato
+		if (root == nullptr)
+			miao = insert(value);
+		else if(value_comp()(value, *hint)) // se la nuova key é minore della key nell'iteratore consigliato
 		{
 			if (hint.base()->left == nullptr) // e non ha figli di sinistra
 			{
-				_Node *nuovo = _alloc.allocate(1);
-				_alloc.construct(nuovo);
+				_Node *nuovo = newnode(value);
 				hint.base()->left = nuovo;
 				nuovo->parent = hint.base();
 				_size++;
@@ -293,9 +292,7 @@ public:
 		{
 			if (hint.base()->right == nullptr) // e non ha figli di sinistra
 			{
-				_Node *nuovo = _alloc.allocate(1);
-				nuovo = _alloc.allocate(sizeof(_Node));
-				//_alloc.construct(newnode;
+				_Node *nuovo = newnode(value);
 				hint.base()->right = nuovo;
 				nuovo->parent = hint.base();
 				_size++;
@@ -307,39 +304,13 @@ public:
 				miao = insert(value);
 		}
 		return (miao.first);
-	//}
-		// nodeptr	__parent;
-		// nodeptr __dummy;
-		// nodeptr& __child = __find_equal(hint, __parent, __dummy, value);
-		// nodeptr __r = static_cast<nodeptr>(__child);
-		// if (__child == nullptr)
-		// {
-		// 	__child = _alloc.allocate(sizeof(_Node)); 
-		// 	_alloc.construct(__child, _Node(value));
-		// 	__child->parent = __parent;
-			
-		// 	// _Node *a = NULL;
-		// 	// _alloc.construct(a, value);
-
-		// 	//__r = _alloc.allocate(1);
-		// 	//Node *a(value);
-		// 	//a = __r;
-		// 	//a.first = value.first;
-		// 	//a->second = value.second;
-		// 	// a->parent = __parent;
-		// 	if (_begin_node->left != nullptr)
-		// 		_begin_node = _begin_node->left;
-		// 	balance_after_insert(get_root(), __child);
-		// 	_size++;
-		// }
-		//return iterator(__r);
 	}
 
 
 	template <class key_type>
 	iterator 		find(const key_type& k)
 	{
-		iterator p = __lower_bound(k, get_root(), get_end_node());
+		iterator p = lower_bound(k);
 		if (p != end() && !value_comp()(k, *p))
 			return p;
 		return end();
@@ -348,7 +319,7 @@ public:
 	template <class key_type>
 	const_iterator 	find(const key_type& k) const
 	{
-		const_iterator p = __lower_bound(k, get_root(), get_end_node());
+		const_iterator p = lower_bound(k);
 		if (p != end() && !value_comp()(k, *p))
 			return p;
 		return end();
@@ -411,16 +382,14 @@ public:
 	template <class key_type>
 	iterator 		lower_bound(const key_type& k)
 	{
-		nodeptr root = get_root();
-		nodeptr result = get_end_node();
+		nodeptr result = _end_node->right;
 		return (iterator)__lower_bound(k, root, result);
 	}
 
 	template <class key_type>
 	const_iterator 		lower_bound(const key_type& k) const
 	{
-		nodeptr root = get_root();
-		nodeptr result = get_end_node();
+		nodeptr result = _end_node->right;
 		return (const_iterator)__lower_bound(k, root, result);
 	}
 	
@@ -461,7 +430,7 @@ public:
 	iterator 		upper_bound(const key_type& k)
 	{
 		nodeptr root = get_root();
-		nodeptr result = get_end_node();
+		nodeptr result = get_end_node()->left;
 		while (root != nullptr)
 		{
 			if (value_comp()(k, root->pair))
@@ -479,7 +448,7 @@ public:
 	const_iterator 	upper_bound(const key_type& k) const
 	{
 		nodeptr root = get_root();
-		nodeptr result = get_end_node();
+		nodeptr result = get_end_node()->left;
 		while (root != nullptr)
 		{
 			if (value_comp()(k, root->pair))
@@ -497,7 +466,7 @@ public:
 	ft::pair<iterator,iterator>             equal_range(const key_type& k)
 	{
 		typedef ft::pair<iterator, iterator> _Pp;
-		nodeptr result = get_end_node();
+		nodeptr result = get_end_node()->left;
 		nodeptr root = get_root();
 		while (root != nullptr)
 		{
@@ -518,7 +487,7 @@ public:
 	ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
 	{
 		typedef ft::pair<const_iterator, const_iterator> _Pp;
-		nodeptr result = get_end_node();
+		nodeptr result = get_end_node()->left;
 		nodeptr root = get_root();
 		while (root != nullptr)
 		{

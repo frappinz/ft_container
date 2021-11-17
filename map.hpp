@@ -127,7 +127,7 @@ namespace ft
 
 		bool      empty()    const { return _tree.size() == 0; }
 		size_type size()     const { return _tree.size(); }
-		size_type max_size() const { return _tree.max_size(); }
+		size_type max_size() const { return 461168601842738790; }
 
 							/********************************   ELEMENT ACCESS   ********************************/
 
@@ -136,11 +136,9 @@ namespace ft
 			iterator i = find(k);
 			if (i != end())
 				return (*i).second;
-			const ft::pair<const key_type, mapped_type> miao;
-			bool inser;
-			ft::pair<iterator, bool> ciao (i, inser);
-			ciao = _tree.insert(miao);
-			return (*i).second;
+			pair<const key_type, mapped_type> *ciao = alloc.allocate(1);
+			pair<key_type, mapped_type> miao = ft::make_pair(k, ciao->second);
+			return _tree.insert(miao).first->second;
 		}
 
 							/********************************   	MODIFIERS     ********************************/
