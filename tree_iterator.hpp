@@ -47,11 +47,11 @@ namespace ft
 
 		/******************************* CLASSE TREE_ITERATOR *******************************/
 	
-	template <class T> class Node;
+	template <class T> struct Node;
 	template <class _Tp> //pair
 	class tree_iterator 
 	{
-		typedef class  Node<_Tp>		_Node;
+		typedef struct  Node<_Tp>		_Node;
 		typedef _Node*				nodeptr;
 		nodeptr 					current;
 	public:

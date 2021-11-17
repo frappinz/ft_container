@@ -87,16 +87,19 @@ namespace ft
 							/********************************    COSTRUCTORS    ********************************/
 
 		public: 
-		explicit map(const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) 
-			: _tree(_vc(comp), typename _base::allocator_type(alloc)) {}
+		explicit map(const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) 
+			: _tree(_vc(comp), typename _base::allocator_type(a)) {
+				alloc = a;
+			}
 
 		template <class InputIterator>
 		map(InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& a = allocator_type()) 
 			:	_tree(_vc(comp), typename _base::allocator_type(a))
 		{
+			alloc = a;
 			insert(first, last);
 		}
-		map(const map& m) : _tree(m._tree) { insert(m.begin(), m.end()); }
+		map(const map& m) : _tree(m._tree) { /*insert(m.begin(), m.end());*/ }
 		~map(){}
 		map& operator=(const map& m)
 		{
@@ -127,7 +130,7 @@ namespace ft
 
 		bool      empty()    const { return _tree.size() == 0; }
 		size_type size()     const { return _tree.size(); }
-		size_type max_size() const { return 461168601842738790; }
+		size_type max_size() const { return _tree.max_size(); }
 
 							/********************************   ELEMENT ACCESS   ********************************/
 

@@ -15,16 +15,16 @@ namespace ft
 	template <class _Tp, class _Compare, class _Allocator> class __tree;
 	template <class _Tp> class tree_iterator;
 	template <class _Tp> class const_tree_iterator;
-	template <typename T> class Node;
+	template <typename T> struct Node;
 		
 	// /**********************  STRUTTURA NODI **********************/
 	
 	template <typename T> //std::pair <T1, T2 
-	class Node {
+	struct Node {
 			public:
 				T pair;
-				class Node *left, *right;
-				class Node *parent;
+				struct Node *left, *right;
+				struct Node *parent;
 				bool is_black;
 				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
 				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
@@ -40,7 +40,7 @@ template <class _Tp, class _Compare, class Allocator = std::allocator<Node<_Tp> 
 class __tree
 {
 public:
-	typedef class Node<_Tp>								_Node;
+	typedef struct Node<_Tp>							_Node;
 	typedef _Node*										nodeptr;
     typedef _Tp                                     	value_type;
     typedef _Compare                                 	value_compare;
@@ -56,7 +56,7 @@ public:
 	typedef ft::tree_reverse_iterator<_Tp>				reverse_iterator;
 	typedef ft::const_tree_reverse_iterator<_Tp>		const_reverse_iterator;
 
-
+// 329406144173384850
 // 384307168202282325
 // 461168601842738790
 private:
@@ -88,7 +88,6 @@ public:
 
 	__tree() : _size(0)
 	{
-		//root = _alloc.allocate(1);
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
@@ -112,14 +111,26 @@ public:
 	}
     __tree(const value_compare& __comp, const allocator_type& __a) : _alloc(__a), _size(0), _value_compare(__comp)
 	{
-		///root = _alloc.allocate(1);
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
 		_begin_node = _end_node;
 	}
 
-    __tree(const __tree& __t) { *this = __t; }
+    __tree(const __tree& __t)  {
+		if (this != &__t)
+		{
+			_value_compare = __t.value_comp();
+			if (_alloc != __t._alloc)
+				clear();
+			else
+				_alloc = __t._alloc;
+
+			_end_node = _alloc.allocate(1);
+			for(iterator i = __t.begin(); i != __t.end(); i++)
+				insert(*i);
+		}
+	}
     __tree& operator=(const __tree& __t){
 		if (this != &__t)
 		{
@@ -139,8 +150,8 @@ public:
 
           iterator begin() const {return       iterator(_begin_node);}
     const_iterator cbegin() const {return const_iterator(_begin_node);}
-          iterator end() const {return      iterator(_end_node->right);}
-    const_iterator cend() const {return const_iterator(_end_node->right);}
+          iterator end() const {return      iterator(_end_node);}
+    const_iterator cend() const {return const_iterator(_end_node);}
 
     size_type max_size() const { return _alloc.max_size(); }
 
@@ -148,7 +159,7 @@ public:
 
 
 	template <class U>
-	_Node *newnode (U& value)
+	_Node *newnode (U& value) 
 	{
 		_Node *a = _alloc.allocate(1);
 		_Node n(value);
@@ -160,7 +171,6 @@ public:
 		_alloc.destroy(get_root());
 		_size = 0;
 		_begin_node = _end_node;
-		_end_node->left = nullptr;
 	}
 
     void swap(__tree& __t){
@@ -226,13 +236,17 @@ public:
 				}
 				else if (value_comp()(x->pair, value))
 				{
-					if (x->right != nullptr)
+					if (x->right != nullptr && x->right != _end_node)
 						x = x->right;
 					else
 					{
 						nuovo = newnode(value);
 						nuovo->parent = x;
 						x->right = nuovo;
+						nuovo->right = _end_node;
+						_end_node->parent = nuovo;
+						_end_node->left = nullptr;
+						nuovo->left = nullptr;
 						inserted = true;
 						break ;
 					}
@@ -249,18 +263,21 @@ public:
 			root = newnode(value);
 			nodeptr r = root;
 			_size++;
+			root->right = _end_node;
 			_begin_node = root;
-			_end_node = root;
-			return ft::pair<iterator,bool>((iterator)r, inserted);
+			_end_node->parent = root;
+			return ft::pair<iterator,bool>((iterator)r, true);
 		}
 		if (_begin_node->left != nullptr)
 			_begin_node = _begin_node->left;
-		if (_end_node->right != nullptr)
-			_end_node = _end_node->right;
+		// while (_end_node->parent->right != _end_node)
+		// 	++_end_node;
+	
 		if (inserted == true)
 		{
 			balance_after_insert(get_root(), nuovo);
 			find_new_root(nuovo);
+			//_end_node->parent = tree_max(root);
 			_size++;
 		}
 		nodeptr r = nuovo;
@@ -346,7 +363,7 @@ public:
 	template <class key_type>
 	iterator 		__lower_bound(const key_type& k, nodeptr start, nodeptr result)
 	{
-		while (start != nullptr) // se la root esiste
+		while (start != nullptr && start != _end_node) // se la root esiste
 		{
 			if (!value_comp()(start->pair, k)) //torna vero se root >= k, falso se root < k
 			{
@@ -382,14 +399,14 @@ public:
 	template <class key_type>
 	iterator 		lower_bound(const key_type& k)
 	{
-		nodeptr result = _end_node->right;
+		nodeptr result = get_end_node();
 		return (iterator)__lower_bound(k, root, result);
 	}
 
 	template <class key_type>
 	const_iterator 		lower_bound(const key_type& k) const
 	{
-		nodeptr result = _end_node->right;
+		nodeptr result = get_end_node();
 		return (const_iterator)__lower_bound(k, root, result);
 	}
 	
@@ -430,7 +447,7 @@ public:
 	iterator 		upper_bound(const key_type& k)
 	{
 		nodeptr root = get_root();
-		nodeptr result = get_end_node()->left;
+		nodeptr result = get_end_node();
 		while (root != nullptr)
 		{
 			if (value_comp()(k, root->pair))
@@ -448,7 +465,7 @@ public:
 	const_iterator 	upper_bound(const key_type& k) const
 	{
 		nodeptr root = get_root();
-		nodeptr result = get_end_node()->left;
+		nodeptr result = get_end_node();
 		while (root != nullptr)
 		{
 			if (value_comp()(k, root->pair))
@@ -466,7 +483,7 @@ public:
 	ft::pair<iterator,iterator>             equal_range(const key_type& k)
 	{
 		typedef ft::pair<iterator, iterator> _Pp;
-		nodeptr result = get_end_node()->left;
+		nodeptr result = get_end_node();
 		nodeptr root = get_root();
 		while (root != nullptr)
 		{
@@ -487,7 +504,7 @@ public:
 	ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
 	{
 		typedef ft::pair<const_iterator, const_iterator> _Pp;
-		nodeptr result = get_end_node()->left;
+		nodeptr result = get_end_node();
 		nodeptr root = get_root();
 		while (root != nullptr)
 		{
@@ -511,7 +528,7 @@ public:
 		if (get_begin_node() == __ptr)
 			_begin_node = __r.base();
 		--_size;
-		tree_remove(get_end_node()->left, static_cast<nodeptr>(__ptr));
+		tree_remove(root, static_cast<nodeptr>(__ptr));
 		return __r;
 	}
 

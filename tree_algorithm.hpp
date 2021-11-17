@@ -36,7 +36,9 @@ namespace ft
 	bool
 	is_left_child(_NodePtr __x)
 	{
-		return __x->parent == nullptr || __x == __x->parent->left;
+		if (__x->parent == nullptr || __x == __x->parent->left || (__x->parent->right != __x))
+			return true;
+		return false;
 	}
 
 	// Determines if the subtree rooted at __x is a proper red black subtree.  If
@@ -134,7 +136,7 @@ namespace ft
 	_NodePtr next_iter(_NodePtr __x)
 	{
 		if (__x->right != nullptr)
-			return static_cast<_NodePtr>(tree_min(__x->right));
+			return tree_min(__x->right);
 		while (!is_left_child(__x))
 			__x = __x->parent;
 		return static_cast< _NodePtr>(__x->parent);
