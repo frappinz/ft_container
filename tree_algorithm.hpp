@@ -312,28 +312,27 @@ namespace ft
 	void
 	tree_remove(_NodePtr __root, _NodePtr __z)
 	{
-		// __z will be removed from the tree.  Client still needs to destruct/deallocate it
-		// __y is either __z, or if __z has two children, __tree_next(__z).
-		// __y will have at most one child.
+		//Z sará rimosso dall'albero. Y sará o Z, o se Z ha due figli, sará quello piú grande,
+		//Y avrá quindi massimo un figlio.
 		// __y will be the initial hole in the tree (make the hole at a leaf)
-		_NodePtr __y = (__z->left == nullptr || __z->right == nullptr) ?
+		_NodePtr __y = (__z->left == nullptr || __z->right == nullptr) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
 						__z : tree_next(__z);
-		// __x is __y's possibly null single child
-		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;
-		// __w is __x's possibly null uncle (will become __x's sibling)
+		// __x é forse il figlio null di y
+		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
+		// __w sará forse lo zio null di _x, che diventerá fratello di _x
 		_NodePtr __w = nullptr;
-		// link __x to __y's parent, and find __w
+		// _x prenderá il genitore di __y, e trova __w
 		if (__x != nullptr)
 			__x->parent = __y->parent;
-		if (is_left_child(__y))
+		if (is_left_child(__y)) // se y é figlio di sinistra
 		{
-			__y->parent->left = __x;
-			if (__y != __root)
-				__w = __y->parent->right;
+			__y->parent->left = __x; //x diventa figlio di sinistra del genitore di y
+			if (__y != __root)		//se y non é root
+				__w = __y->parent->right;	//w diventa il figlio destro del genitore di y
 			else
 				__root = __x;  // __w == nullptr
 		}
-		else
+		else	//se y é figlio di sinistra
 		{
 			__y->parent->right = __x;
 			// __y can't be root if it is a right child

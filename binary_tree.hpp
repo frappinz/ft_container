@@ -527,6 +527,7 @@ public:
 		++__r;
 		if (get_begin_node() == __ptr)
 			_begin_node = __r.base();
+		find_new_root(__ptr);
 		--_size;
 		tree_remove(root, static_cast<nodeptr>(__ptr));
 		return __r;
