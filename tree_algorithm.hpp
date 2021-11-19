@@ -326,9 +326,10 @@ namespace ft
 			__x->parent = __y->parent;
 		if (is_left_child(__y)) // se y é figlio di sinistra
 		{
-			__y->parent->left = __x; //x diventa figlio di sinistra del genitore di y
+			if (__root != __y)
+				__y->parent->left = __x; //x diventa figlio di sinistra del genitore di y
 			if (__y != __root)		//se y non é root
-				__w = __y->parent->right;	//w diventa il figlio destro del genitore di y
+				__w = __y->parent->right;	//w diventa il fratello di y
 			else
 				__root = __x;  // __w == nullptr
 		}
