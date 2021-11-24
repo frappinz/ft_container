@@ -139,8 +139,11 @@ namespace ft
 			iterator i = find(k);
 			if (i != end())
 				return (*i).second;
-			pair<const key_type, mapped_type> *ciao = alloc.allocate(1);
-			pair<key_type, mapped_type> miao = ft::make_pair(k, ciao->second);
+			//pair<const key_type, mapped_type> *ciao = alloc.allocate(1);
+			std::allocator <mapped_type>T_alloc;
+			mapped_type *prova = T_alloc.allocate(1);
+			//T_alloc.construct (prova,NULL);
+			pair<key_type, mapped_type> miao = ft::make_pair(k, *prova);
 			return _tree.insert(miao).first->second;
 		}
 

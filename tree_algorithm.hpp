@@ -36,7 +36,7 @@ namespace ft
 	bool
 	is_left_child(_NodePtr __x)
 	{
-		if (__x->parent == nullptr || __x == __x->parent->left || (__x->parent->right != __x))
+		if (__x->parent == nullptr || __x == __x->parent->left || (__x->parent->left == nullptr && __x != __x->parent->right && __x->parent->right != nullptr) )
 			return true;
 		return false;
 	}
@@ -319,6 +319,8 @@ namespace ft
 						__z : tree_next(__z);
 		// __x é forse il figlio null di y
 		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
+		if (__x != nullptr && __x->is_end)
+			__x = nullptr;
 		// __w sará forse lo zio null di _x, che diventerá fratello di _x
 		_NodePtr __w = nullptr;
 		// _x prenderá il genitore di __y, e trova __w
@@ -347,7 +349,12 @@ namespace ft
 			// __z->left != nulptr but __z->right might == __x == nullptr
 			__y->parent = __z->parent;
 			if (is_left_child(__z))
-				__y->parent->left = __y;
+			{
+				if (__root == __z)
+					__root = __y;
+				else
+					__y->parent->left = __y;
+			}
 			else
 				__y->parent->right = __y;
 			__y->left = __z->left;
@@ -356,8 +363,8 @@ namespace ft
 			if (__y->right != nullptr)
 				__y->right->parent = __y;
 			__y->is_black = __z->is_black;
-			if (__root == __z)
-				__root = __y;
+			//if (__root == __z)
+			//	__root = __y;
 		}
 		// There is no need to rebalance if we removed a red, or if we removed
 		//     the last node.

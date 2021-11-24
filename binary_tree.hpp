@@ -26,8 +26,9 @@ namespace ft
 				struct Node *left, *right;
 				struct Node *parent;
 				bool is_black;
-				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
-				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true) {}
+				bool is_end;
+				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false) {}
+				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false){}
 				~Node(){}
 			};
 
@@ -56,9 +57,6 @@ public:
 	typedef ft::tree_reverse_iterator<_Tp>				reverse_iterator;
 	typedef ft::const_tree_reverse_iterator<_Tp>		const_reverse_iterator;
 
-// 329406144173384850
-// 384307168202282325
-// 461168601842738790
 private:
 	nodeptr				root;
     nodeptr         	_begin_node; //punta sempre al nodo con la chiave piú piccola
@@ -86,11 +84,21 @@ public:
 		root = x;
 	}
 
+	void	find_new_end(nodeptr root)
+	{
+		nodeptr x = root;
+		while (x->right && !x->right->is_end)
+			x = x->right;
+		x->right = _end_node;
+		_end_node->parent = x;
+	}
+
 	__tree() : _size(0)
 	{
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
+		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
     explicit __tree(const value_compare& __comp) : _size(0), _value_compare(__comp)
@@ -99,6 +107,7 @@ public:
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
+		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
     explicit __tree(const allocator_type& __a) : _alloc(__a), _size(0)
@@ -107,6 +116,7 @@ public:
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
+		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
     __tree(const value_compare& __comp, const allocator_type& __a) : _alloc(__a), _size(0), _value_compare(__comp)
@@ -114,6 +124,7 @@ public:
 		root = nullptr;
 		_begin_node = _alloc.allocate(1);
 		_end_node = _alloc.allocate(1);
+		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
 
@@ -191,13 +202,20 @@ public:
     void erase_position(iterator __p){
 		pointer __np = __p.base();
 		iterator __r = __remove_node_nodeptr(__np);
+		find_new_root(_begin_node);
 		_alloc.destroy(__p.base());
 		_alloc.deallocate(__np, 1);
+		find_new_end(root);
 	}
 
     void erase_range(iterator __f, iterator __l){
-		for (; __f != __l; ++__f)
-			erase_position(__f);
+		iterator tmp;
+		while(__f != __l)
+		{
+			tmp = __f;
+			if(__f++ != __l)
+				erase_position(tmp);
+		}
 
 	}
 
@@ -530,6 +548,7 @@ public:
 		find_new_root(__ptr);
 		--_size;
 		tree_remove(root, static_cast<nodeptr>(__ptr));
+		find_new_root(_begin_node);
 		return __r;
 	}
 
