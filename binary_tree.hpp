@@ -190,19 +190,19 @@ public:
     	std::swap(_alloc, __t._alloc);
     	std::swap(_size, __t._size);
 		std::swap(_value_compare, __t._value_compare);
-    	if (size() == 0)
-			_begin_node = _end_node;
-		else
-			get_end_node()->left->parent = static_cast<nodeptr>(get_end_node());
-		if (__t.size() == 0)
-			__t._begin_node = __t.get_end_node();
-		else
-			__t.get_end_node()->left->parent = static_cast<nodeptr>(__t.get_end_node());
+    	// if (size() == 0)
+		// 	_begin_node = _end_node;
+		// else
+		// 	get_end_node()->left->parent = static_cast<nodeptr>(get_end_node());
+		// if (__t.size() == 0)
+		// 	__t._begin_node = __t.get_end_node();
+		// else
+		// 	__t.get_end_node()->left->parent = static_cast<nodeptr>(__t.get_end_node());
 	}
     void erase_position(iterator __p){
 		pointer __np = __p.base();
 		iterator __r = __remove_node_nodeptr(__np);
-		find_new_root(_begin_node);
+		//find_new_root(_begin_node);
 		_alloc.destroy(__p.base());
 		_alloc.deallocate(__np, 1);
 		find_new_end(root);
@@ -222,11 +222,16 @@ public:
 	template <class _Key>
 	size_type erase_key(const _Key& __k)
 	{
-		ft::pair<iterator, iterator> __p = equal_range(__k); // da cambiare!!
-		size_type __r = 0;
-		for (; __p.first != __p.second; ++__r)
-			erase_position(__p.first);
-		return __r;
+		iterator r = find(__k);
+		if (r == end())
+			return (0);
+		erase_position(r);
+		return 1;
+		// ft::pair<iterator, iterator> __p = equal_range(__k); // da cambiare!!
+		// size_type __r = 0;
+		// for (; __p.first != __p.second; ++__r)
+		// 	erase_position(__p.first);
+		// return __r;
 	}
 
 	ft::pair<iterator, bool> insert(const value_type& value )
@@ -261,9 +266,12 @@ public:
 						nuovo = newnode(value);
 						nuovo->parent = x;
 						x->right = nuovo;
-						nuovo->right = _end_node;
-						_end_node->parent = nuovo;
-						_end_node->left = nullptr;
+						if (value_comp()(_end_node->parent->pair , value))
+						{
+							nuovo->right = _end_node;
+							_end_node->parent = nuovo;
+							_end_node->left = nullptr;
+						}
 						nuovo->left = nullptr;
 						inserted = true;
 						break ;
@@ -282,6 +290,8 @@ public:
 			nodeptr r = root;
 			_size++;
 			root->right = _end_node;
+			_end_node->left = nullptr;
+			_end_node->right = nullptr;
 			_begin_node = root;
 			_end_node->parent = root;
 			return ft::pair<iterator,bool>((iterator)r, true);

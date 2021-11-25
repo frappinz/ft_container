@@ -315,7 +315,7 @@ namespace ft
 		//Z sará rimosso dall'albero. Y sará o Z, o se Z ha due figli, sará quello piú grande,
 		//Y avrá quindi massimo un figlio.
 		// __y will be the initial hole in the tree (make the hole at a leaf)
-		_NodePtr __y = (__z->left == nullptr || __z->right == nullptr) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
+		_NodePtr __y = (__z->left == nullptr ||  __z->right == nullptr || (__z->right->is_end)) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
 						__z : tree_next(__z);
 		// __x é forse il figlio null di y
 		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
@@ -408,8 +408,7 @@ namespace ft
 							__w = __w->left->right;
 						}
 						// __w->is_black is now true, __w may have null children
-						if ((__w->left  == nullptr || __w->left->is_black) &&
-							(__w->right == nullptr || __w->right->is_black))
+						if ((__w->left  == nullptr || __w->left->is_black) && (__w->right == nullptr || __w->right->is_black))
 						{
 							__w->is_black = false;
 							__x = __w->parent;
