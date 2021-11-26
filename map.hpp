@@ -54,6 +54,7 @@ namespace ft
 			typedef __tree<value_type, _vc>   	_base;
 
 			allocator_type			alloc;
+			std::allocator<_base>	tree_alloc;
 			_base 					_tree;
 		public:
 			/****************** MEMBER TYPES ******************/
@@ -142,11 +143,9 @@ namespace ft
 			//pair<const key_type, mapped_type> *ciao = alloc.allocate(1);
 			std::allocator <mapped_type>T_alloc;
 			mapped_type *prova = T_alloc.allocate(1);
-			//T_alloc.construct (prova,NULL);
 			pair<key_type, mapped_type> miao = ft::make_pair(k, *prova);
 			return _tree.insert(miao).first->second;
 		}
-
 							/********************************   	MODIFIERS     ********************************/
 
 		pair<iterator, bool> 	insert(const value_type& v) { return _tree.insert(v); }

@@ -151,10 +151,11 @@ namespace ft
 	{
 		if (__x->left != nullptr)
 			return tree_max(__x->left);
-		_NodePtr __xx = static_cast<_NodePtr>(__x);
-		while (is_left_child(__xx))
-			__xx = __xx->parent;
-		return __xx->parent;
+		while (__x->parent != nullptr && is_left_child(__x))
+			__x = __x->parent;
+		if (__x->parent == nullptr)
+			return __x;
+		return __x->parent;
 	}
 
 	// Ritorna: puntatore a una foglia

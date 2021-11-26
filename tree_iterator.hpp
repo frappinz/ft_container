@@ -49,7 +49,7 @@ namespace ft
 	
 	template <class T> struct Node;
 	template <class _Tp> //pair
-	class tree_iterator 
+	class tree_iterator : public ft::iterator<ft::bidirectional_iterator_tag, _Tp>
 	{
 		typedef struct  Node<_Tp>		_Node;
 		typedef _Node*				nodeptr;
@@ -108,7 +108,7 @@ namespace ft
 	/******************************* CONST_TREE_ITERATOR *******************************/
 
 	template <class _Tp> //pair
-	class const_tree_iterator
+	class const_tree_iterator : public ft::iterator<ft::bidirectional_iterator_tag, _Tp>
 	{
 		typedef Node<_Tp> 					_Node;
 		typedef const _Node*				nodeptr;
@@ -159,87 +159,5 @@ namespace ft
 			{return !(__x == __y);}
 		~const_tree_iterator(){}
 	};
-
-	// template <class _Tp>
-	// bool operator==(const const_tree_iterator<_Tp>& __x, const const_tree_iterator<_Tp>& __y)
-	// {return __x.current == __y.current;}
-
-	// template <class _Tp>
-	// bool operator!=(const const_tree_iterator<_Tp>& __x, const const_tree_iterator<_Tp>& __y)
-	// {return !(__x == __y);}
-	 //tree_iterator
-
-
-
-
-	template <class _Tp>
-	class tree_reverse_iterator : public tree_iterator<_Tp>
-	{
-		typedef Node<_Tp> 		_Node;
-		typedef _Node*			nodeptr;
-		nodeptr 				current;
-	public:
-		typedef typename tree_iterator<_Tp>::reference       reference;
-		typedef typename tree_iterator<_Tp>::pointer         pointer;
-
-		tree_reverse_iterator() : current(nullptr) {}
-		explicit tree_reverse_iterator(const nodeptr& x) : current(x) {}
-		tree_reverse_iterator(const tree_iterator<_Tp> x) : current(x.base()) {}
-
-		template <class U> tree_reverse_iterator(const tree_reverse_iterator<U>& u) : current(u.base()) {}
-		template <class U> tree_reverse_iterator& operator=(const tree_reverse_iterator<U>& u) { current = u.base(); return *this; }
-		tree_reverse_iterator base() const { return static_cast<tree_reverse_iterator>(current); };
-		//pointer base() {return &current->pair; }
-		nodeptr get_ptr() const { return current; } 
-
-		reference operator*() const { nodeptr tmp = current; --tmp; return tmp->pair; };
-		pointer   operator->() const { return &(operator*()); }
-		tree_reverse_iterator& operator++() {  --current; return *this; }
-		tree_reverse_iterator  operator++(int) { tree_reverse_iterator __tmp(*this); --current; return __tmp; }
-		tree_reverse_iterator& operator--() { ++current; return *this; }
-		tree_reverse_iterator  operator--(int) { tree_reverse_iterator __tmp(*this); ++current; return __tmp; }
-		friend
-		bool operator== (const tree_reverse_iterator& lhs, const tree_reverse_iterator& rhs) { return lhs.current == rhs.current;}
-		friend
-		bool operator!= (const tree_reverse_iterator& lhs, const tree_reverse_iterator& rhs) { return lhs.current != rhs.current; }
-	};
-
-
-
-	template <class _Tp>
-	class const_tree_reverse_iterator : public const_tree_iterator<_Tp>
-	{
-		typedef Node<_Tp> 					_Node;
-		typedef const _Node*				nodeptr;
-		nodeptr 							current;
-	public:
-		typedef typename const_tree_iterator<_Tp>::const_reference       reference;
-		typedef typename const_tree_iterator<_Tp>::const_pointer         pointer;
-
-		const_tree_reverse_iterator() : current(nullptr) {}
-		explicit const_tree_reverse_iterator(const nodeptr& x) : current(x) {}
-		const_tree_reverse_iterator(const const_tree_iterator<_Tp> x) : current(x.base()) {}
-		template <class U> const_tree_reverse_iterator(const tree_reverse_iterator<U>& u) : current(u.get_ptr()){}
-		template <class U> const_tree_reverse_iterator& operator=(const const_tree_reverse_iterator<U>& u) { current = u.get_ptr(); return *this; }
-		const_tree_reverse_iterator base() const { return static_cast<const_tree_reverse_iterator>(current); };
-		nodeptr get_ptr() const { return current; } 
-		reference operator*() const { nodeptr tmp = current; --tmp; return tmp->pair; };
-		pointer   operator->() const { return &(operator*()); }
-		const_tree_reverse_iterator& operator++() {  --current; return *this; }
-		const_tree_reverse_iterator  operator++(int) { const_tree_reverse_iterator __tmp(*this); --current; return __tmp; }
-		const_tree_reverse_iterator& operator--() { ++current; return *this; }
-		const_tree_reverse_iterator  operator--(int) { const_tree_reverse_iterator __tmp(*this); ++current; return __tmp; }
-		friend
-		bool operator== (const const_tree_reverse_iterator& lhs, const const_tree_reverse_iterator& rhs) { return lhs.base() == rhs.base();}
-		friend
-		bool operator!= (const const_tree_reverse_iterator& lhs, const const_tree_reverse_iterator& rhs) { return lhs.base() != rhs.base(); }
-	};
-	
-
-	template <class _Tp>
-  	bool operator== (const tree_iterator<_Tp>& lhs, const tree_reverse_iterator<_Tp>& rhs) { return lhs == rhs;}
-	template <class _Tp>
-	bool operator!= (const tree_reverse_iterator<_Tp>& lhs, const tree_iterator<_Tp>& rhs) { return lhs != rhs;}
-
 
 } 

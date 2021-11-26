@@ -46,6 +46,7 @@ public:
     typedef _Tp                                     	value_type;
     typedef _Compare                                 	value_compare;
     typedef Allocator                               	allocator_type;
+	typedef std::allocator<__tree>						pippo;
     typedef typename allocator_type::pointer        	pointer;
     typedef typename allocator_type::const_pointer   	const_pointer;
     typedef typename allocator_type::size_type       	size_type;
@@ -54,10 +55,11 @@ public:
 	typedef typename allocator_type::const_reference	const_reference;
     typedef ft::tree_iterator<_Tp>            			iterator;
     typedef ft::const_tree_iterator<_Tp> 				const_iterator;
-	typedef ft::tree_reverse_iterator<_Tp>				reverse_iterator;
-	typedef ft::const_tree_reverse_iterator<_Tp>		const_reverse_iterator;
+	typedef ft::reverse_iterator<iterator>				reverse_iterator;
+	typedef ft::const_reverse_iterator<const_iterator>		const_reverse_iterator;
 
 private:
+	pippo				tree_alloc;
 	nodeptr				root;
     nodeptr         	_begin_node; //punta sempre al nodo con la chiave piú piccola
 	nodeptr				_end_node; //genitore di root
@@ -190,19 +192,10 @@ public:
     	std::swap(_alloc, __t._alloc);
     	std::swap(_size, __t._size);
 		std::swap(_value_compare, __t._value_compare);
-    	// if (size() == 0)
-		// 	_begin_node = _end_node;
-		// else
-		// 	get_end_node()->left->parent = static_cast<nodeptr>(get_end_node());
-		// if (__t.size() == 0)
-		// 	__t._begin_node = __t.get_end_node();
-		// else
-		// 	__t.get_end_node()->left->parent = static_cast<nodeptr>(__t.get_end_node());
 	}
     void erase_position(iterator __p){
 		pointer __np = __p.base();
 		iterator __r = __remove_node_nodeptr(__np);
-		//find_new_root(_begin_node);
 		_alloc.destroy(__p.base());
 		_alloc.deallocate(__np, 1);
 		find_new_end(root);
@@ -227,11 +220,6 @@ public:
 			return (0);
 		erase_position(r);
 		return 1;
-		// ft::pair<iterator, iterator> __p = equal_range(__k); // da cambiare!!
-		// size_type __r = 0;
-		// for (; __p.first != __p.second; ++__r)
-		// 	erase_position(__p.first);
-		// return __r;
 	}
 
 	ft::pair<iterator, bool> insert(const value_type& value )
@@ -279,7 +267,7 @@ public:
 				}
 				else//se troviamo un'uguaglianza sostituiamo il data
 				{
-					x->pair.second = value.second;
+					nuovo = x;
 					break ;
 				}
 			}
@@ -316,38 +304,8 @@ public:
 	iterator insert( iterator hint, const value_type& value )
 	{
 		ft::pair<iterator, bool> miao;
-		if (root == nullptr)
-			miao = insert(value);
-		else if(value_comp()(value, *hint)) // se la nuova key é minore della key nell'iteratore consigliato
-		{
-			if (hint.base()->left == nullptr) // e non ha figli di sinistra
-			{
-				_Node *nuovo = newnode(value);
-				hint.base()->left = nuovo;
-				nuovo->parent = hint.base();
-				_size++;
-				balance_after_insert(get_root(), nuovo);
-				find_new_root(nuovo);
-				return (iterator)nuovo;
-			}
-			else
-				miao = insert(value);
-		}
-		else
-		{
-			if (hint.base()->right == nullptr) // e non ha figli di sinistra
-			{
-				_Node *nuovo = newnode(value);
-				hint.base()->right = nuovo;
-				nuovo->parent = hint.base();
-				_size++;
-				balance_after_insert(get_root(), nuovo);
-				find_new_root(nuovo);
-				return (iterator)nuovo;
-			}
-			else
-				miao = insert(value);
-		}
+		(void) hint;
+		miao = insert(value);
 		return (miao.first);
 	}
 
