@@ -32,12 +32,12 @@ namespace ft
 		*/
 
 	// Ritorna VERO se _x é left child (piú piccolo del genitore)
-	// Precondition:  __x != nullptr.
+	// Precondition:  __x != NULL.
 	template <class _NodePtr>
 	bool
 	is_left_child(_NodePtr __x)
 	{
-		if (__x->parent == nullptr || __x == __x->parent->left || (__x->parent->left == nullptr && __x != __x->parent->right && __x->parent->right != nullptr) )
+		if (__x->parent == NULL || __x == __x->parent->left || (__x->parent->left == NULL && __x != __x->parent->right && __x->parent->right != NULL) )
 			return true;
 		return false;
 	}
@@ -50,17 +50,17 @@ namespace ft
 	template <class _NodePtr>
 	unsigned __tree_sub_invariant(_NodePtr __x)
 	{
-		if (__x == nullptr)
+		if (__x == NULL)
 			return 1;
 		// parent consistency checked by caller
 		// check __x->left consistency
-		if (__x->left != nullptr && __x->left->parent != __x)
+		if (__x->left != NULL && __x->left->parent != __x)
 			return 0;
 		// check __x->right consistency
-		if (__x->right != nullptr && __x->right->parent != __x)
+		if (__x->right != NULL && __x->right->parent != __x)
 			return 0;
-		// check __x->left != __x->right unless both are nullptr
-		if (__x->left == __x->right && __x->left != nullptr)
+		// check __x->left != __x->right unless both are NULL
+		if (__x->left == __x->right && __x->left != NULL)
 			return 0;
 		// If this is red, neither child can be red
 		if (!__x->is_black)
@@ -81,14 +81,14 @@ namespace ft
 
 
 	// Determina se l'albero é corretto : 
-	// root == nullptr é corretto. Ritorna vero se root é un albero corretto, se no falso
+	// root == NULL é corretto. Ritorna vero se root é un albero corretto, se no falso
 	template <class _NodePtr>
 	bool __tree_invariant(_NodePtr __root)
 	{
-		if (__root == nullptr)
+		if (__root == NULL)
 			return true;
 		// check __x->parent consistency
-		if (__root->parent == nullptr) //il genitore della root deve esistere
+		if (__root->parent == NULL) //il genitore della root deve esistere
 			return false;
 		if (!is_left_child(__root)) //root deve essere il figlio di sinistra 
 			return false;
@@ -101,32 +101,32 @@ namespace ft
 
 
 	// Ritorna: puntatore al nodo piú a sinistra sotto _x
-	// Condizione di partenza : _x != nullptr.
+	// Condizione di partenza : _x != NULL.
 	template <class _NodePtr>
 	_NodePtr tree_min(_NodePtr __x)
 	{
-		while (__x->left != nullptr)
+		while (__x->left != NULL)
 			__x = __x->left;
 		return __x;
 	}
 
 	// Ritorna: puntatore al nodo piú a destra sotto _x
-	// Condizione di partenza : _x != nullptr.
+	// Condizione di partenza : _x != NULL.
 	template <class _NodePtr>
 	_NodePtr tree_max(_NodePtr __x)
 	{
-		while (__x->right != nullptr)
+		while (__x->right != NULL)
 			__x = __x->right;
 		return __x;
 	}
 
 
 	// Ritorna: puntatore al prossimo nodo in ordine di grandezza dopo _x.
-	// Condizione di partenza : _x != nullptr.
+	// Condizione di partenza : _x != NULL.
 	template <class _NodePtr>
 	_NodePtr tree_next(_NodePtr __x)
 	{
-		if (__x->right != nullptr)
+		if (__x->right != NULL)
 			return tree_min(__x->right);
 		while (!is_left_child(__x))
 			__x = __x->parent;
@@ -136,7 +136,7 @@ namespace ft
 	template <class _NodePtr>
 	_NodePtr next_iter(_NodePtr __x)
 	{
-		if (__x->right != nullptr)
+		if (__x->right != NULL)
 			return tree_min(__x->right);
 		while (!is_left_child(__x))
 			__x = __x->parent;
@@ -145,33 +145,33 @@ namespace ft
 
 
 	// Ritorna: puntatore al nodo piú piccolo prima di _x
-	// Condizione di partenza : _x != nullptr.
+	// Condizione di partenza : _x != NULL.
 	// Nota: _x potrebbe essere _root->parent
 	template <class _NodePtr>
 	_NodePtr prev_iter(_NodePtr __x)
 	{
-		if (__x->left != nullptr)
+		if (__x->left != NULL)
 			return tree_max(__x->left);
-		while (__x->parent != nullptr && is_left_child(__x))
+		while (__x->parent != NULL && is_left_child(__x))
 			__x = __x->parent;
-		if (__x->parent == nullptr)
+		if (__x->parent == NULL)
 			return __x;
 		return __x->parent;
 	}
 
 	// Ritorna: puntatore a una foglia
-	// Condizione di partenza : _x != nullptr.
+	// Condizione di partenza : _x != NULL.
 	template <class _NodePtr>
 	_NodePtr __tree_leaf(_NodePtr __x)
 	{
 		while (true)
 		{
-			if (__x->left != nullptr)
+			if (__x->left != NULL)
 			{
 				__x = __x->left;
 				continue;
 			}
-			if (__x->right != nullptr)
+			if (__x->right != NULL)
 			{
 				__x = __x->right;
 				continue;
@@ -183,19 +183,19 @@ namespace ft
 
 
 	// Effetti: rende _x->right la root del subtree con _x come left child, preservando l'ordine
-	// Condizione di partenza: x->right != nullptr
+	// Condizione di partenza: x->right != NULL
 	template <class _NodePtr>
 	void
 	left_rotate(_NodePtr __x)
 	{
 		_NodePtr __y = __x->right;   //crea un nodo y a cui assegna x->right
 		__x->right = __y->left;	//x->right diventa il left child di y
-		if (__x->right != nullptr)
+		if (__x->right != NULL)
 			__x->right->parent = __x;
 		__y->parent = __x->parent;
 		if (is_left_child(__x))
 		{
-			if (__x->parent != nullptr)
+			if (__x->parent != NULL)
 				__x->parent->left = __y;
 		}
 		else
@@ -205,19 +205,19 @@ namespace ft
 	}
 
 	// Effetti: rende _x->left la root del subtree con _x come right child, preservando l'ordine
-	// Condizione di partenza: x->left != nullptr
+	// Condizione di partenza: x->left != NULL
 	template <class _NodePtr>
 	void
 	right_rotate(_NodePtr __x)
 	{
 		_NodePtr __y = __x->left;
 		__x->left = __y->right;
-		if (__x->left != nullptr)
+		if (__x->left != NULL)
 			__x->left->parent = __x;
 		__y->parent = __x->parent;
 		if (is_left_child(__x))
 		{
-			if (__x->parent != nullptr)
+			if (__x->parent != NULL)
 				__x->parent->left = __y;
 		}
 		else
@@ -231,11 +231,11 @@ namespace ft
 
 
 	// Effetti: Ribilancia la root dopo aver attaccato _x a una foglia.
-	// Condizione di partenza: root != nullptr && _x != nullptr
+	// Condizione di partenza: root != NULL && _x != NULL
 								// _x non ha figli
 								//_x é la root o un figlio diretto o indiretto della root
 	//                If __x were to be unlinked from __root (setting __root to
-	//                  nullptr if __root == __x), __tree_invariant(__root) == true.
+	//                  NULL if __root == __x), __tree_invariant(__root) == true.
 	// Postcondition: __tree_invariant(end_node->left) == true.  end_node->left
 	//                may be different than the value passed in as __root.
 	template <class _NodePtr>
@@ -249,7 +249,7 @@ namespace ft
 			if (is_left_child(__x->parent)) // se il genitore é un figlio sinistro
 			{
 				_NodePtr __y = __x->parent->parent->right; // assegno a y lo zio destro di x
-				if (__y != nullptr && !__y->is_black)	//se lo zio destro esiste e é rosso
+				if (__y != NULL && !__y->is_black)	//se lo zio destro esiste e é rosso
 				{
 					__x = __x->parent;
 					__x->is_black = true;	// il genitore diventa nero
@@ -275,7 +275,7 @@ namespace ft
 			else
 			{
 				_NodePtr __y = __x->parent->parent->left;
-				if (__y != nullptr && !__y->is_black)
+				if (__y != NULL && !__y->is_black)
 				{
 					__x = __x->parent;
 					__x->is_black = true;
@@ -301,7 +301,7 @@ namespace ft
 		}
 	}
 
-	// Precondition:  __root != nullptr && __z != nullptr.
+	// Precondition:  __root != NULL && __z != NULL.
 	//                __tree_invariant(__root) == true.
 	//                __z == __root or == a direct or indirect child of __root.
 	// Effects:  unlinks __z from the tree rooted at __root, rebalancing as needed.
@@ -317,16 +317,16 @@ namespace ft
 		//Z sará rimosso dall'albero. Y sará o Z, o se Z ha due figli, sará quello piú grande,
 		//Y avrá quindi massimo un figlio.
 		// __y will be the initial hole in the tree (make the hole at a leaf)
-		_NodePtr __y = (__z->left == nullptr ||  __z->right == nullptr || (__z->right->is_end)) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
+		_NodePtr __y = (__z->left == NULL ||  __z->right == NULL || (__z->right->is_end)) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
 						__z : tree_next(__z);
 		// __x é forse il figlio null di y
-		_NodePtr __x = __y->left != nullptr ? __y->left : __y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
-		if (__x != nullptr && __x->is_end)
-			__x = nullptr;
+		_NodePtr __x = __y->left != NULL ? __y->left : __y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
+		if (__x != NULL && __x->is_end)
+			__x = NULL;
 		// __w sará forse lo zio null di _x, che diventerá fratello di _x
-		_NodePtr __w = nullptr;
+		_NodePtr __w = NULL;
 		// _x prenderá il genitore di __y, e trova __w
-		if (__x != nullptr)
+		if (__x != NULL)
 			__x->parent = __y->parent;
 		if (is_left_child(__y)) // se y é figlio di sinistra
 		{
@@ -335,7 +335,7 @@ namespace ft
 			if (__y != __root)		//se y non é root
 				__w = __y->parent->right;	//w diventa il fratello di y
 			else
-				__root = __x;  // __w == nullptr
+				__root = __x;  // __w == NULL
 		}
 		else	//se y é figlio di sinistra
 		{
@@ -348,7 +348,7 @@ namespace ft
 		//    but copy __z's color.  This does not impact __x or __w.
 		if (__y != __z)
 		{
-			// __z->left != nulptr but __z->right might == __x == nullptr
+			// __z->left != nulptr but __z->right might == __x == NULL
 			__y->parent = __z->parent;
 			if (is_left_child(__z))
 			{
@@ -362,7 +362,7 @@ namespace ft
 			__y->left = __z->left;
 			__y->left->parent = __y;
 			__y->right = __z->right;
-			if (__y->right != nullptr)
+			if (__y->right != NULL)
 				__y->right->parent = __y;
 			__y->is_black = __z->is_black;
 			//if (__root == __z)
@@ -370,7 +370,7 @@ namespace ft
 		}
 		// There is no need to rebalance if we removed a red, or if we removed
 		//     the last node.
-		if (__removed_black && __root != nullptr)
+		if (__removed_black && __root != NULL)
 		{
 			// Rebalance:
 			// __x has an implicit black color (transferred from the removed __y)
@@ -383,8 +383,8 @@ namespace ft
 			// Since __y was black and only had one child (which __x points to), __x
 			//   is either red with no children, else null, otherwise __y would have
 			//   different black heights under left and right pointers.
-			// if (__x == __root || __x != nullptr && !__x->is_black)
-			if (__x != nullptr)
+			// if (__x == __root || __x != NULL && !__x->is_black)
+			if (__x != NULL)
 				__x->is_black = true;
 			else
 			{
@@ -410,7 +410,7 @@ namespace ft
 							__w = __w->left->right;
 						}
 						// __w->is_black is now true, __w may have null children
-						if ((__w->left  == nullptr || __w->left->is_black) && (__w->right == nullptr || __w->right->is_black))
+						if ((__w->left  == NULL || __w->left->is_black) && (__w->right == NULL || __w->right->is_black))
 						{
 							__w->is_black = false;
 							__x = __w->parent;
@@ -428,7 +428,7 @@ namespace ft
 						}
 						else  // __w has a red child
 						{
-							if (__w->right == nullptr || __w->right->is_black)
+							if (__w->right == NULL || __w->right->is_black)
 							{
 								// __w left child is non-null and red
 								__w->left->is_black = true;
@@ -461,8 +461,8 @@ namespace ft
 							__w = __w->right->left;
 						}
 						// __w->is_black is now true, __w may have null children
-						if ((__w->left  == nullptr || __w->left->is_black) &&
-							(__w->right == nullptr || __w->right->is_black))
+						if ((__w->left  == NULL || __w->left->is_black) &&
+							(__w->right == NULL || __w->right->is_black))
 						{
 							__w->is_black = false;
 							__x = __w->parent;
@@ -480,7 +480,7 @@ namespace ft
 						}
 						else  // __w has a red child
 						{
-							if (__w->left == nullptr || __w->left->is_black)
+							if (__w->left == NULL || __w->left->is_black)
 							{
 								// __w right child is non-null and red
 								__w->right->is_black = true;

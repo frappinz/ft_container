@@ -12,7 +12,6 @@
 #include "utils.hpp"
 #include <exception>
 
-#define nullptr NULL
 namespace ft
 {
 

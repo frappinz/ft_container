@@ -66,7 +66,7 @@ namespace ft
 		//typedef _Tp*						const_pointer;
 		//typedef _Tp&						const_reference;
 	
-		tree_iterator() : current(nullptr) {}
+		tree_iterator() : current(NULL) {}
 		explicit tree_iterator(const nodeptr& __p) : current(__p) {} //forse anche qui guai
 		tree_iterator(const tree_iterator& u) : current(u.base()) {}
 		tree_iterator(tree_iterator& u) : current(u.base()) {}
@@ -121,7 +121,7 @@ namespace ft
 		typedef const _Tp*						const_pointer; //potrebbe causare guai //o forse no
 		typedef const _Tp&						const_reference;
 	
-		const_tree_iterator() : current(nullptr) {}
+		const_tree_iterator() : current(NULL) {}
 		const_tree_iterator(nodeptr &__p) : current(__p) {} //forse anche qui guai
 		const_tree_iterator(_Node* __p) : current(__p) {} //forse anche qui guai
 
