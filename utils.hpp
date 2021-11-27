@@ -1,6 +1,5 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
-#define nullptr 0
 
 #include <algorithm>
 namespace ft
@@ -80,7 +79,7 @@ namespace ft
 		friend bool operator== (const pair<T1,T2>& x, const pair<T1,T2>& y);
 		template <class T1, class T2>
 		friend bool operator<  (const pair<T1,T2>& x, const pair<T1,T2>& y);
-
+		
 		void swap(pair& __t){
     	std::swap(first, __t.first);
     	std::swap(second, __t.second);

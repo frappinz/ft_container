@@ -2,13 +2,10 @@
 
 #include <iostream>
 #include <memory>
-//#include <__tree>
 #include "map.hpp"
 #include "tree_algorithm.hpp"
 #include "utils.hpp"
 #include "tree_iterator.hpp"
-#include <map>
-#define nullptr 0
 
 
 namespace ft
@@ -134,8 +131,6 @@ public:
 	}
 
     __tree(const __tree& __t)  {
-		if (_size > 0)
-			erase_range(this->begin(), this->end());
 		if (this != &__t)
 		{
 			_value_compare = __t.value_comp();
@@ -150,6 +145,7 @@ public:
 		}
 	}
     __tree& operator=(const __tree& __t){
+		
 		if (this != &__t)
 		{
 			_value_compare = __t.value_comp();
@@ -165,21 +161,9 @@ public:
 	}
     ~__tree() 
 	{
-		if (_size > 0)
+		if (_size)
 			erase_range(begin(), end());
-		// iterator i = begin();
-		// iterator tmp;		
-		// while (i != end())
-		// {
-		// 	tmp = i;
-		// 	if(size())
-		// 		i++;
-		// 	else
-		// 		break;
-		// 	_alloc.deallocate(tmp.base(), 1);
-		// }
 		_alloc.deallocate(_end_node, 1);
-
 	}
 
 
@@ -203,7 +187,7 @@ public:
 	}
 
     void clear(){
-		//_alloc.destroy(get_root());
+		erase_range(begin(), end());
 		_size = 0;
 		_begin_node = _end_node;
 	}

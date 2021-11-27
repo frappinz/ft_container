@@ -6,7 +6,6 @@
 
 #include "tree_algorithm.hpp"
 
-#define nullptr 0
 
 
 namespace ft
