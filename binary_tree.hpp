@@ -498,7 +498,7 @@ public:
 	template <class key_type>
 	std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
 	{
-		typedef ft::pair<const_iterator, const_iterator> _Pp;
+		typedef std::pair<const_iterator, const_iterator> _Pp;
 		nodeptr result = get_end_node();
 		nodeptr root = get_root();
 		while (root != NULL)
