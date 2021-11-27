@@ -12,7 +12,7 @@
 #include "utils.hpp"
 #include <exception>
 
-
+#define nullptr NULL
 namespace ft
 {
 
@@ -143,7 +143,7 @@ namespace ft
 			std::allocator <mapped_type>T_alloc;
 			mapped_type prova;
 			T_alloc.construct(&prova);
-			pair<key_type, mapped_type> miao = ft::make_pair(k, prova);
+			pair<key_type, mapped_type> miao = std::make_pair(k, prova);
 			T_alloc.destroy(&prova);
 			return _tree.insert(miao).first->second;
 
@@ -153,7 +153,7 @@ namespace ft
 		pair<iterator, bool> 	insert(const value_type& v) { return _tree.insert(v); }
 		iterator 					insert(iterator position, const value_type& v) { return _tree.insert(position, v); }
 		template <class InputIterator>
-			void 					insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			void 					insert(InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
 				for (; first != last; ++first)
 					insert(*first);

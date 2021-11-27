@@ -6,6 +6,7 @@
 #include "tree_algorithm.hpp"
 #include "utils.hpp"
 #include "tree_iterator.hpp"
+#define nullptr NULL
 
 
 namespace ft
@@ -229,7 +230,7 @@ public:
 		return 1;
 	}
 
-	ft::pair<iterator, bool> insert(const value_type& value )
+	std::pair<iterator, bool> insert(const value_type& value )
 	{
 		nodeptr _root = get_root();
 		nodeptr x = nullptr;
@@ -290,7 +291,7 @@ public:
 			//_alloc.deallocate(_begin_node, 1);
 			_begin_node = root;
 			_end_node->parent = root;
-			return ft::pair<iterator,bool>((iterator)r, true);
+			return std::pair<iterator,bool>((iterator)r, true);
 		}
 		if (_begin_node->left != nullptr)
 			_begin_node = _begin_node->left;
@@ -305,13 +306,13 @@ public:
 			_size++;
 		}
 		nodeptr r = nuovo;
-		return ft::pair<iterator,bool>((iterator)r, inserted);
+		return std::pair<iterator,bool>((iterator)r, inserted);
 	}
 
 
 	iterator insert( iterator hint, const value_type& value )
 	{
-		ft::pair<iterator, bool> miao;
+		std::pair<iterator, bool> miao;
 		(void) hint;
 		miao = insert(value);
 		return (miao.first);
@@ -474,9 +475,9 @@ public:
 	}
 
 	template <class key_type>
-	ft::pair<iterator,iterator>             equal_range(const key_type& k)
+	std::pair<iterator,iterator>             equal_range(const key_type& k)
 	{
-		typedef ft::pair<iterator, iterator> _Pp;
+		typedef std::pair<iterator, iterator> _Pp;
 		nodeptr result = get_end_node();
 		nodeptr root = get_root();
 		while (root != nullptr)
@@ -495,7 +496,7 @@ public:
 	}
 
 	template <class key_type>
-	ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
+	std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
 	{
 		typedef ft::pair<const_iterator, const_iterator> _Pp;
 		nodeptr result = get_end_node();
