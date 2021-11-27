@@ -131,7 +131,8 @@ namespace ft
 
 		bool      empty()    const { return _tree.size() == 0; }
 		size_type size()     const { return _tree.size(); }
-		size_type max_size() const { return _tree.max_size(); }
+		size_type max_size() const {
+		return _tree.max_size(); }
 
 							/********************************   ELEMENT ACCESS   ********************************/
 
@@ -140,11 +141,13 @@ namespace ft
 			iterator i = find(k);
 			if (i != end())
 				return (*i).second;
-			//pair<const key_type, mapped_type> *ciao = alloc.allocate(1);
 			std::allocator <mapped_type>T_alloc;
 			mapped_type *prova = T_alloc.allocate(1);
 			pair<key_type, mapped_type> miao = ft::make_pair(k, *prova);
-			return _tree.insert(miao).first->second;
+			pair<iterator,bool> tmp = _tree.insert(miao);
+			T_alloc.destroy(prova);
+			return tmp.first->second;
+			//return _tree.insert(miao).first->second;
 		}
 							/********************************   	MODIFIERS     ********************************/
 

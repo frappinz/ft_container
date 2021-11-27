@@ -19,16 +19,15 @@ namespace ft
 		
 	// /**********************  STRUTTURA NODI **********************/
 	
-	template <typename T> //std::pair <T1, T2 
+	template <class T> //std::pair <T1, T2 
 	struct Node {
-			public:
-				T pair;
-				struct Node *left, *right;
-				struct Node *parent;
+				struct Node<T> *left, *right;
+				struct Node<T> *parent;
 				bool is_black;
 				bool is_end;
+				T pair;
 				Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false) {}
-				Node(T value) : pair(value), left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false){}
+				Node(T value) : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false), pair(value) {}
 				~Node(){}
 			};
 
@@ -62,7 +61,7 @@ private:
 	pippo				tree_alloc;
 	nodeptr				root;
     nodeptr         	_begin_node; //punta sempre al nodo con la chiave piú piccola
-	nodeptr				_end_node; //genitore di root
+	nodeptr				_end_node;
 	Allocator			_alloc;
 	size_type			_size;
 	value_compare		_value_compare;
@@ -93,30 +92,31 @@ public:
 			x = x->right;
 		x->right = _end_node;
 		_end_node->parent = x;
+		_end_node->left = nullptr;
+		_end_node->right = nullptr;
+		_end_node->is_end = true;
 	}
 
 	__tree() : _size(0)
 	{
 		root = nullptr;
-		_begin_node = _alloc.allocate(1);
+		_begin_node = nullptr;
 		_end_node = _alloc.allocate(1);
 		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
     explicit __tree(const value_compare& __comp) : _size(0), _value_compare(__comp)
 	{
-		//root = _alloc.allocate(1);
 		root = nullptr;
-		_begin_node = _alloc.allocate(1);
+		_begin_node = nullptr;
 		_end_node = _alloc.allocate(1);
 		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
     explicit __tree(const allocator_type& __a) : _alloc(__a), _size(0)
 	{
-		//root = _alloc.allocate(1);
 		root = nullptr;
-		_begin_node = _alloc.allocate(1);
+		_begin_node = nullptr;
 		_end_node = _alloc.allocate(1);
 		_end_node->is_end = true;
 		_begin_node = _end_node;
@@ -124,13 +124,15 @@ public:
     __tree(const value_compare& __comp, const allocator_type& __a) : _alloc(__a), _size(0), _value_compare(__comp)
 	{
 		root = nullptr;
-		_begin_node = _alloc.allocate(1);
+		_begin_node = nullptr;
 		_end_node = _alloc.allocate(1);
 		_end_node->is_end = true;
 		_begin_node = _end_node;
 	}
 
     __tree(const __tree& __t)  {
+		if (_size > 0)
+			erase_range(this->begin(), this->end());
 		if (this != &__t)
 		{
 			_value_compare = __t.value_comp();
@@ -158,7 +160,24 @@ public:
 		}
 		return *this;
 	}
-    ~__tree() {}
+    ~__tree() 
+	{
+		if (_size > 0)
+			erase_range(begin(), end());
+		// iterator i = begin();
+		// iterator tmp;		
+		// while (i != end())
+		// {
+		// 	tmp = i;
+		// 	if(size())
+		// 		i++;
+		// 	else
+		// 		break;
+		// 	_alloc.deallocate(tmp.base(), 1);
+		// }
+		_alloc.deallocate(_end_node, 1);
+
+	}
 
 
           iterator begin() const {return       iterator(_begin_node);}
@@ -166,8 +185,8 @@ public:
           iterator end() const {return      iterator(_end_node);}
     const_iterator cend() const {return const_iterator(_end_node);}
 
-    size_type max_size() const { return _alloc.max_size(); }
-
+    size_type max_size() const {
+		return size_type(~0) / sizeof(_Node); }
 
 
 
@@ -181,7 +200,7 @@ public:
 	}
 
     void clear(){
-		_alloc.destroy(get_root());
+		//_alloc.destroy(get_root());
 		_size = 0;
 		_begin_node = _end_node;
 	}
@@ -196,9 +215,10 @@ public:
     void erase_position(iterator __p){
 		pointer __np = __p.base();
 		iterator __r = __remove_node_nodeptr(__np);
-		_alloc.destroy(__p.base());
-		_alloc.deallocate(__np, 1);
-		find_new_end(root);
+		//_alloc.destroy(__p.base());
+		_alloc.deallocate(__p.base(), 1);
+		if (_size > 0)
+			find_new_end(root);
 	}
 
     void erase_range(iterator __f, iterator __l){
@@ -280,6 +300,7 @@ public:
 			root->right = _end_node;
 			_end_node->left = nullptr;
 			_end_node->right = nullptr;
+			//_alloc.deallocate(_begin_node, 1);
 			_begin_node = root;
 			_end_node->parent = root;
 			return ft::pair<iterator,bool>((iterator)r, true);
