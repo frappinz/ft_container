@@ -4,6 +4,7 @@
 
 #include "vector.hpp"
 #include <stack>
+#include <type_traits>
 namespace ft
 {
 	template <class T, class Container = ft::vector<T> >

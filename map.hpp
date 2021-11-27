@@ -11,6 +11,7 @@
 #include <string>
 #include "utils.hpp"
 #include <exception>
+#include <type_traits>
 
 namespace ft
 {
