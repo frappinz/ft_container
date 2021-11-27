@@ -1,5 +1,6 @@
 #ifndef UTILS_HPP
 #define UTILS_HPP
+#define nullptr 0
 
 #include <algorithm>
 namespace ft

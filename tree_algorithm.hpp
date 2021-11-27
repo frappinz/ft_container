@@ -1,6 +1,8 @@
 #pragma once
 
 #include <iostream>
+#define nullptr 0
+
 
 
 namespace ft
