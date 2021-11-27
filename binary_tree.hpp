@@ -2,12 +2,15 @@
 
 #include <iostream>
 #include <memory>
-#include <__tree>
+//#include <__tree>
 #include "map.hpp"
 #include "tree_algorithm.hpp"
 #include "utils.hpp"
 #include "tree_iterator.hpp"
 #include <map>
+#define nullptr 0
+
+
 namespace ft
 {
 

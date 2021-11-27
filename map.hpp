@@ -13,6 +13,8 @@
 #include "utils.hpp"
 #include <exception>
 
+#define nullptr 0
+
 namespace ft
 {
 
