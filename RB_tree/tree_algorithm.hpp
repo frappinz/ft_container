@@ -99,14 +99,14 @@ namespace ft
 	void
 	balance_after_insert(NodePtr root, NodePtr x)
 	{
-		x->is_black = x == root; // x é nero se x é la root, altrimenti é rosso (soddisfa la condizione per cui la root é nera, altrimenti inseriamo a prescindere un nodo rosso)
+		//x->is_black = x == root; // x é nero se x é la root, altrimenti é rosso (soddisfa la condizione per cui la root é nera, altrimenti inseriamo a prescindere un nodo rosso)
 		while (x != root && !x->parent->is_black)// questo é il caso in cui invece non abbiamo inserito la root, e quindi é tutto da bilanciare perché anche il genitore é rosso (non soddisfa la proprietá per cui i rossi devono avere figli neri)
 		{
 			// e il genitore non é manco root perché se la root é nera, quindi siamo in un subtree
 			if (is_left_child(x->parent)) // se il genitore é un figlio sinistro
 			{
 				NodePtr y = x->parent->parent->right; // assegno a y lo zio destro di x
-				if (y != NULL && !y->is_black)	//se lo zio destro esiste e é rosso
+				if (y != NULL && !y->is_black && !y->is_end)	//se lo zio destro esiste e é rosso
 				{
 					x = x->parent;
 					x->is_black = true;	// il genitore diventa nero
@@ -175,7 +175,7 @@ namespace ft
 		// _x prenderá il genitore di y, e trova w
 		if (x != NULL)
 			x->parent = y->parent;
-		if (is_left_child(y)) // se y é figlio di sinistra
+		if (is_left_child(y)) // se y é figlio di sinistra o root
 		{
 			if (root != y)
 				y->parent->left = x; //x diventa figlio di sinistra del genitore di y

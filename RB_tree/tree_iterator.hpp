@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include "../iterator.hpp"
 #include "tree_algorithm.hpp"
 
 
@@ -10,11 +11,13 @@ namespace ft
 		/******************************* CLASSE TREE_ITERATOR *******************************/
 	
 	template <class T> struct Node;
+	template <class _Tp> class const_tree_iterator;
 	template <class _Tp> //pair
 	class tree_iterator : public ft::iterator<ft::bidirectional_iterator_tag, _Tp>
 	{
 		typedef struct  Node<_Tp>		_Node;
 		typedef _Node*				nodeptr;
+		typedef const Node<_Tp>*		const_nodeptr;
 		nodeptr 					current;
 	public:
 		typedef _Tp                             value_type;
@@ -24,11 +27,12 @@ namespace ft
 		explicit tree_iterator(const nodeptr& __p) : current(__p) {}
 		tree_iterator(const tree_iterator& u) : current(u.base()) {}
 		tree_iterator(tree_iterator& u) : current(u.base()) {}
-	
+		tree_iterator(const const_nodeptr f) : current(f) {} //fatto per set
 
 		tree_iterator& operator=(const _Node& u) { current = u; return *this; }
 		tree_iterator& operator=(const tree_iterator& u) { current = u.base(); return *this; }
 		nodeptr base() const { return (nodeptr)current; }
+		
 		reference operator*() const { return  current->pair; }
 		pointer operator->() const { return &(operator*()); }
 		tree_iterator& operator++()
@@ -69,6 +73,7 @@ namespace ft
 		typedef Node<_Tp> 					_Node;
 		typedef const _Node*				nodeptr;
 		nodeptr 							current;
+		_Node*								curr; //fatto per set
 	public:
 		typedef _Tp                             value_type;
 		typedef _Tp&                  			reference;
@@ -77,14 +82,14 @@ namespace ft
 	
 		const_tree_iterator() : current(NULL) {}
 		const_tree_iterator(nodeptr &__p) : current(__p) {}
-		const_tree_iterator(_Node* __p) : current(__p) {}
+		const_tree_iterator(_Node* __p) : current(__p), curr(__p) {} //aggiunto per set
 
 		const_tree_iterator(const const_tree_iterator& u) : current(u.base()) {}
 		const_tree_iterator(const tree_iterator<_Tp>& u) : current(u.base()) {}
 
 		const_tree_iterator& operator=(const _Node& u) { current = u.base(); return *this; }
 
-		
+		_Node* basic() const {return curr;} //aggiunto per set
 		nodeptr base() const { return current; }
 		nodeptr	base(){ return current; }
 		const_reference operator*() const { return  current->pair; }

@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <memory>
-#include "containers/map.hpp"
+//#include "containers/map.hpp"
 #include "tree_algorithm.hpp"
 #include "../utils.hpp"
 #include "tree_iterator.hpp"
@@ -192,6 +192,7 @@ namespace ft
 		{
 			_Node *a = _alloc.allocate(1);
 			_Node n(value);
+			n.is_black = false;
 			_alloc.construct(a, n);
 			return a;
 		}
@@ -297,6 +298,7 @@ namespace ft
 				root = newnode(value);
 				nodeptr r = root;
 				_size++;
+				root->is_black = true;
 				root->right = _end_node;
 				_end_node->left = NULL;
 				_end_node->right = NULL;
@@ -536,6 +538,24 @@ namespace ft
 			return _Pp(const_iterator(result), const_iterator(result));
 		}
 
+		void _print_tree()
+		{
+			iterator i = begin();
+			while (i != end())
+			{
+				if (i.base() != root)
+				{
+					if (i.base()->is_black)
+						std::cout << "\033[0;31m" << i.base()->pair << "\033[0;37m -> parent = " << i.base()->parent->pair << std::endl;
+					else
+						std::cout << i.base()->pair << " -> parent = " << i.base()->parent->pair << std::endl;
+				}
+				else
+					std::cout << "ROOT : " << i.base()->pair << std::endl;
+				i++;
+			}
+			std::cout << "\n\n\n";
+		}	
 
 	}; //classe tree
 

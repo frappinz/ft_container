@@ -7,7 +7,7 @@
 # define TESTED_NAMESPACE ft
 #endif
 
-#define _pair TESTED_NAMESPACE::pair
+#define _pair std::pair
 
 template <typename T>
 std::string	printpair(const T &iterator, bool nl = true, std::ostream &o = std::cout)
@@ -22,7 +22,7 @@ template <typename T_SET>
 void	printSize(T_SET const &st, bool print_content = 1)
 {
 	std::cout << "size: " << st.size() << std::endl;
-	std::cout << "max_size: " << st.max_size() << std::endl;
+	//std::cout << "max_size: " << st.max_size() << std::endl;
 	if (print_content)
 	{
 		typename T_SET::const_iterator it = st.begin(), ite = st.end();
