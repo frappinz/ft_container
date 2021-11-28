@@ -10,6 +10,9 @@
 #include <string>
 #include "utils.hpp"
 #include <exception>
+#include <type_traits>
+
+
 
 
 namespace ft
@@ -35,13 +38,13 @@ namespace ft
 	};
 
 
-	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<pair<const Key, T> > > 
+	template <class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T> > > 
 	class map
 	{
 		public:
 			typedef Key                                      	key_type;
 			typedef T                                        	mapped_type;
-			typedef pair<const key_type, mapped_type>   		value_type;
+			typedef std::pair<const key_type, mapped_type>   		value_type;
 			typedef Compare                                  	key_compare;
 			typedef Allocator                                	allocator_type;
 			typedef value_type&       							reference;
@@ -142,17 +145,17 @@ namespace ft
 			std::allocator <mapped_type>T_alloc;
 			mapped_type prova;
 			T_alloc.construct(&prova);
-			pair<key_type, mapped_type> miao = ft::make_pair(k, prova);
+			std::pair<key_type, mapped_type> miao = std::make_pair(k, prova);
 			T_alloc.destroy(&prova);
 			return _tree.insert(miao).first->second;
 
 		}
 							/********************************   	MODIFIERS     ********************************/
 
-		pair<iterator, bool> 	insert(const value_type& v) { return _tree.insert(v); }
+		std::pair<iterator, bool> 	insert(const value_type& v) { return _tree.insert(v); }
 		iterator 					insert(iterator position, const value_type& v) { return _tree.insert(position, v); }
 		template <class InputIterator>
-			void 					insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			void 					insert(InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
 				for (; first != last; ++first)
 					insert(*first);
@@ -184,8 +187,8 @@ namespace ft
 		const_iterator 	upper_bound(const key_type& k) const { return _tree.upper_bound(k); }
 
 
-		pair<iterator,iterator>             equal_range(const key_type& k) { return _tree.equal_range(k); }
-		pair<const_iterator,const_iterator> equal_range(const key_type& k) const { return _tree.equal_range(k); }
+		std::pair<iterator,iterator>             equal_range(const key_type& k) { return _tree.equal_range(k); }
+		std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const { return _tree.equal_range(k); }
 
 	}; //map
 

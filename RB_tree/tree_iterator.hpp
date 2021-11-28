@@ -20,7 +20,7 @@ namespace ft
 		typedef _Tp                             value_type;
 		typedef _Tp&                  			reference;
 		typedef _Tp*							pointer;
-		tree_iterator() : current(nullptr) {}
+		tree_iterator() : current(NULL) {}
 		explicit tree_iterator(const nodeptr& __p) : current(__p) {}
 		tree_iterator(const tree_iterator& u) : current(u.base()) {}
 		tree_iterator(tree_iterator& u) : current(u.base()) {}
@@ -75,7 +75,7 @@ namespace ft
 		typedef const _Tp*						const_pointer;
 		typedef const _Tp&						const_reference;
 	
-		const_tree_iterator() : current(nullptr) {}
+		const_tree_iterator() : current(NULL) {}
 		const_tree_iterator(nodeptr &__p) : current(__p) {}
 		const_tree_iterator(_Node* __p) : current(__p) {}
 

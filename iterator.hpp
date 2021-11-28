@@ -227,7 +227,7 @@ namespace ft
 		typedef typename iterator_traits<Iterator>::reference       reference;
 		typedef typename iterator_traits<Iterator>::pointer         pointer;
 
-		base_iterator() : current(nullptr) {}
+		base_iterator() : current(NULL) {}
 		explicit base_iterator(Iterator x) : current(x) {}
 		template <class U> base_iterator(const base_iterator<U>& u) : current(u.base()) {}
 		template <class U> base_iterator& operator=(const base_iterator<U>& u) { current = u.base(); return *this; }

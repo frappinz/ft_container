@@ -22,7 +22,7 @@
 #include "iterator.hpp"
 #include <cstring>
 #include <string.h>
-//#include <type_traits>
+#include <type_traits>
 #include "utils.hpp"
   
 //ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
@@ -131,14 +131,14 @@ namespace ft
 		explicit vector(const allocator_type& alloc = allocator_type())
 			:	_size(0),
 				_capacity(0),
-				_begin(nullptr),
+				_begin(NULL),
 				_alloc(alloc)
 		{
 		}
 		explicit vector (size_type n, const value_type& val = value_type(), const allocator_type& alloc = allocator_type()) 
 			:	_size(0),
 				_capacity(0),
-				_begin(nullptr),
+				_begin(NULL),
 				_alloc(alloc)
 		{	
 			if (n > 0)
@@ -152,15 +152,15 @@ namespace ft
 		}
 		template <class InputIterator> 
 			vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type(), 
-					typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
+					typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)     //da cambiare quando facciamo is_integral!
 				: 	_size(0), 
 					_capacity(0), 
-					_begin(nullptr), 
+					_begin(NULL), 
 					_alloc(alloc)
 		{
 			assign(first, last);
 		}
-		vector (const vector& x) : _size(0), _capacity(0), _begin(nullptr), _alloc(x._alloc) 
+		vector (const vector& x) : _size(0), _capacity(0), _begin(NULL), _alloc(x._alloc) 
 		{
 			_capacity = x._capacity;
 			_size = x._size;
@@ -169,7 +169,7 @@ namespace ft
 		}
 		~vector()
 		{
-			if (this->_begin != nullptr || _capacity != 0)
+			if (this->_begin != NULL || _capacity != 0)
 				_alloc.deallocate(_begin, _capacity);
 		}
 
@@ -200,7 +200,7 @@ namespace ft
 		size_type max_size() const { return ( _alloc.max_size()); }
 		void reserve( size_type n )
 		{
-			if (n > _capacity && _begin != nullptr)
+			if (n > _capacity && _begin != NULL)
 			{
 				pointer tmp = NULL;
 				tmp = _alloc.allocate(n);
@@ -213,7 +213,7 @@ namespace ft
 				_capacity = n;
 				_alloc.deallocate(tmp, n);
 			}
-			else if (_begin == nullptr)
+			else if (_begin == NULL)
 			{
 				_capacity = n;
 				_begin = _alloc.allocate(_capacity);
@@ -246,7 +246,7 @@ namespace ft
 		/********************************   	MODIFIERS     ********************************/
 
 		template <class InputIterator>
-			void assign (InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			void assign (InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			_size = 0;
 			InputIterator tmp;
@@ -256,7 +256,7 @@ namespace ft
 				tmp++;
 				_size++;
 			}
-			if (_begin != nullptr && _capacity != 0)
+			if (_begin != NULL && _capacity != 0)
 				this->_alloc.deallocate(this->_begin, this->_capacity);
 			_capacity = _size *2;
 			_begin = _alloc.allocate(_capacity);
@@ -343,7 +343,7 @@ namespace ft
 		}
 
 		template <class InputIterator>
-    		void insert (iterator position, InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+    		void insert (iterator position, InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 		{
 			size_t range = 0;
 			for (InputIterator i = first; i != last; ++i)

@@ -6,6 +6,8 @@
 #include "tree_algorithm.hpp"
 #include "../utils.hpp"
 #include "tree_iterator.hpp"
+#include <type_traits>
+#include <utility>
 
 
 namespace ft
@@ -27,8 +29,8 @@ namespace ft
 		bool is_black;
 		bool is_end;
 		T pair;
-		Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false) {}
-		Node(T value) : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false), pair(value) {}
+		Node() : left(NULL), right(NULL), parent(NULL), is_black(true), is_end(false) {}
+		Node(T value) : left(NULL), right(NULL), parent(NULL), is_black(true), is_end(false), pair(value) {}
 		~Node(){}
 	};
 
@@ -67,8 +69,8 @@ namespace ft
 
 		__tree() : _size(0)
 		{
-			root = nullptr;
-			_begin_node = nullptr;
+			root = NULL;
+			_begin_node = NULL;
 			_end_node = _alloc.allocate(1);
 			_end_node->is_end = true;
 			_begin_node = _end_node;
@@ -76,8 +78,8 @@ namespace ft
 
 		explicit __tree(const value_compare& __comp) : _size(0), _value_compare(__comp)
 		{
-			root = nullptr;
-			_begin_node = nullptr;
+			root = NULL;
+			_begin_node = NULL;
 			_end_node = _alloc.allocate(1);
 			_end_node->is_end = true;
 			_begin_node = _end_node;
@@ -85,8 +87,8 @@ namespace ft
 
 		explicit __tree(const allocator_type& __a) : _alloc(__a), _size(0)
 		{
-			root = nullptr;
-			_begin_node = nullptr;
+			root = NULL;
+			_begin_node = NULL;
 			_end_node = _alloc.allocate(1);
 			_end_node->is_end = true;
 			_begin_node = _end_node;
@@ -94,8 +96,8 @@ namespace ft
 
 		__tree(const value_compare& __comp, const allocator_type& __a) : _alloc(__a), _size(0), _value_compare(__comp)
 		{
-			root = nullptr;
-			_begin_node = nullptr;
+			root = NULL;
+			_begin_node = NULL;
 			_end_node = _alloc.allocate(1);
 			_end_node->is_end = true;
 			_begin_node = _end_node;
@@ -157,7 +159,7 @@ namespace ft
 		void	set_root(nodeptr x) 			{ root = x; }
 		void	find_new_root(nodeptr x) 
 		{
-			while (x->parent != nullptr)
+			while (x->parent != NULL)
 				x = x->parent;
 			root = x;
 		}
@@ -169,8 +171,8 @@ namespace ft
 				x = x->right;
 			x->right = _end_node;
 			_end_node->parent = x;
-			_end_node->left = nullptr;
-			_end_node->right = nullptr;
+			_end_node->left = NULL;
+			_end_node->right = NULL;
 			_end_node->is_end = true;
 		}
 		/********************************      ITERATOR     ********************************/
@@ -240,20 +242,20 @@ namespace ft
 			return 1;
 		}
 
-		ft::pair<iterator, bool> insert(const value_type& value )
+		std::pair<iterator, bool> insert(const value_type& value )
 		{
 			nodeptr _root = get_root();
-			nodeptr x = nullptr;
-			nodeptr nuovo = nullptr;
+			nodeptr x = NULL;
+			nodeptr nuovo = NULL;
 			bool inserted = false;
-			if (_root != nullptr && _size != 0) //se root esiste
+			if (_root != NULL && _size != 0) //se root esiste
 			{
 				x = _root;//puntiamo x a root
 				while (true)
 				{
 					if (value_comp()(value, x->pair)) //se la key é minore della root
 					{
-						if (x->left != nullptr) //se esiste un figlio di sinistra
+						if (x->left != NULL) //se esiste un figlio di sinistra
 							x = x->left;//ci spostiamo
 						else{
 							nuovo = newnode(value);
@@ -265,7 +267,7 @@ namespace ft
 					}
 					else if (value_comp()(x->pair, value))
 					{
-						if (x->right != nullptr && x->right != _end_node)
+						if (x->right != NULL && x->right != _end_node)
 							x = x->right;
 						else
 						{
@@ -276,9 +278,9 @@ namespace ft
 							{
 								nuovo->right = _end_node;
 								_end_node->parent = nuovo;
-								_end_node->left = nullptr;
+								_end_node->left = NULL;
 							}
-							nuovo->left = nullptr;
+							nuovo->left = NULL;
 							inserted = true;
 							break ;
 						}
@@ -296,13 +298,13 @@ namespace ft
 				nodeptr r = root;
 				_size++;
 				root->right = _end_node;
-				_end_node->left = nullptr;
-				_end_node->right = nullptr;
+				_end_node->left = NULL;
+				_end_node->right = NULL;
 				_begin_node = root;
 				_end_node->parent = root;
-				return ft::pair<iterator,bool>((iterator)r, true);
+				return std::pair<iterator,bool>((iterator)r, true);
 			}
-			if (_begin_node->left != nullptr)
+			if (_begin_node->left != NULL)
 				_begin_node = _begin_node->left;
 			if (inserted == true)
 			{
@@ -311,12 +313,12 @@ namespace ft
 				_size++;
 			}
 			nodeptr r = nuovo;
-			return ft::pair<iterator,bool>((iterator)r, inserted);
+			return std::pair<iterator,bool>((iterator)r, inserted);
 		}
 
 		iterator insert( iterator hint, const value_type& value )
 		{
-			ft::pair<iterator, bool> miao;
+			std::pair<iterator, bool> miao;
 			(void) hint;
 			miao = insert(value);
 			return (miao.first);
@@ -359,7 +361,7 @@ namespace ft
 		size_type      	count(const key_type& k) const
 		{
 			nodeptr rt = get_root();
-			while (rt != nullptr)
+			while (rt != NULL)
 			{
 				if (value_comp()(k, rt->pair))
 				{
@@ -376,7 +378,7 @@ namespace ft
 		template <class key_type>
 		iterator 		__lower_bound(const key_type& k, nodeptr start, nodeptr result)
 		{
-			while (start != nullptr && start != _end_node)
+			while (start != NULL && start != _end_node)
 			{
 				if (!value_comp()(start->pair, k))
 				{
@@ -394,7 +396,7 @@ namespace ft
 		template <class key_type>
 		const_iterator 	__lower_bound(const key_type& k, nodeptr start, nodeptr result) const
 		{
-			while (start != nullptr)
+			while (start != NULL)
 			{
 				if (!value_comp()(start->pair, k))
 				{
@@ -427,7 +429,7 @@ namespace ft
 		template <class key_type>
 		const_iterator	__upper_bound(const key_type& __v, nodeptr start, nodeptr result) const
 		{
-			while (start != nullptr)
+			while (start != NULL)
 			{
 				if (value_comp()(__v, start->pair))
 				{
@@ -443,7 +445,7 @@ namespace ft
 		template <class key_type>
 		iterator	__upper_bound(const key_type& __v, nodeptr start, nodeptr result)
 		{
-			while (start != nullptr)
+			while (start != NULL)
 			{
 				if (value_comp()(__v, start->pair))
 				{
@@ -461,7 +463,7 @@ namespace ft
 		{
 			nodeptr root = get_root();
 			nodeptr result = get_end_node();
-			while (root != nullptr)
+			while (root != NULL)
 			{
 				if (value_comp()(k, root->pair))
 				{
@@ -479,7 +481,7 @@ namespace ft
 		{
 			nodeptr root = get_root();
 			nodeptr result = get_end_node();
-			while (root != nullptr)
+			while (root != NULL)
 			{
 				if (value_comp()(k, root->pair))
 				{
@@ -493,12 +495,12 @@ namespace ft
 		}
 
 		template <class key_type>
-		ft::pair<iterator,iterator> equal_range(const key_type& k)
+		std::pair<iterator,iterator> equal_range(const key_type& k)
 		{
-			typedef ft::pair<iterator, iterator> _Pp;
+			typedef std::pair<iterator, iterator> _Pp;
 			nodeptr result = get_end_node();
 			nodeptr root = get_root();
-			while (root != nullptr)
+			while (root != NULL)
 			{
 				if (value_comp()(k, root->pair))
 				{
@@ -514,12 +516,12 @@ namespace ft
 		}
 
 		template <class key_type>
-		ft::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
+		std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const
 		{
-			typedef ft::pair<const_iterator, const_iterator> _Pp;
+			typedef std::pair<const_iterator, const_iterator> _Pp;
 			nodeptr result = get_end_node();
 			nodeptr root = get_root();
-			while (root != nullptr)
+			while (root != NULL)
 			{
 				if (value_comp()(k, root->pair))
 				{

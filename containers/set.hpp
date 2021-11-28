@@ -71,10 +71,10 @@ namespace ft
 
 							/********************************   	MODIFIERS     ********************************/
 
-		pair<iterator, bool> 	insert(const value_type& v) { return tree.insert(v); }
+		std::pair<iterator, bool> 	insert(const value_type& v) { return tree.insert(v); }
 		iterator 					insert(iterator position, const value_type& v) { return tree.insert(position, v); }
 		template <class InputIterator>
-			void insert(InputIterator first, InputIterator last, typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = 0)
+			void insert(InputIterator first, InputIterator last, typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* = 0)
 			{
 				for (; first != last; ++first)
 					insert(*first);
@@ -106,8 +106,8 @@ namespace ft
 		const_iterator 	upper_bound(const key_type& k) const { return tree.upper_bound(k); }
 
 
-		pair<iterator,iterator>             equal_range(const key_type& k) { return tree.equal_range(k); }
-		pair<const_iterator,const_iterator> equal_range(const key_type& k) const { return tree.equal_range(k); }
+		std::pair<iterator,iterator>             equal_range(const key_type& k) { return tree.equal_range(k); }
+		std::pair<const_iterator,const_iterator> equal_range(const key_type& k) const { return tree.equal_range(k); }
 
 	}; //set
 

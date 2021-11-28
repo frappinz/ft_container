@@ -12,7 +12,7 @@ namespace ft
 	bool
 	is_left_child(NodePtr x)
 	{
-		if (x->parent == nullptr || x == x->parent->left || (x->parent->left == nullptr && x != x->parent->right && x->parent->right != nullptr) )
+		if (x->parent == NULL || x == x->parent->left || (x->parent->left == NULL && x != x->parent->right && x->parent->right != NULL) )
 			return true;
 		return false;
 	}
@@ -20,7 +20,7 @@ namespace ft
 	template <class NodePtr>
 	NodePtr tree_min(NodePtr x)
 	{
-		while (x->left != nullptr)
+		while (x->left != NULL)
 			x = x->left;
 		return x;
 	}
@@ -28,7 +28,7 @@ namespace ft
 	template <class NodePtr>
 	NodePtr tree_max(NodePtr x)
 	{
-		while (x->right != nullptr)
+		while (x->right != NULL)
 			x = x->right;
 		return x;
 	}
@@ -36,7 +36,7 @@ namespace ft
 	template <class NodePtr>
 	NodePtr next_iter(NodePtr x)
 	{
-		if (x->right != nullptr)
+		if (x->right != NULL)
 			return tree_min(x->right);
 		while (!is_left_child(x))
 			x = x->parent;
@@ -46,11 +46,11 @@ namespace ft
 	template <class NodePtr>
 	NodePtr prev_iter(NodePtr x)
 	{
-		if (x->left != nullptr)
+		if (x->left != NULL)
 			return tree_max(x->left);
-		while (x->parent != nullptr && is_left_child(x))
+		while (x->parent != NULL && is_left_child(x))
 			x = x->parent;
-		if (x->parent == nullptr)
+		if (x->parent == NULL)
 			return x;
 		return x->parent;
 	}
@@ -61,12 +61,12 @@ namespace ft
 	{
 		NodePtr y = x->right;   //crea un nodo y a cui assegna x->right
 		x->right = y->left;	//x->right diventa il left child di y
-		if (x->right != nullptr)
+		if (x->right != NULL)
 			x->right->parent = x;
 		y->parent = x->parent;
 		if (is_left_child(x))
 		{
-			if (x->parent != nullptr)
+			if (x->parent != NULL)
 				x->parent->left = y;
 		}
 		else
@@ -81,12 +81,12 @@ namespace ft
 	{
 		NodePtr y = x->left;
 		x->left = y->right;
-		if (x->left != nullptr)
+		if (x->left != NULL)
 			x->left->parent = x;
 		y->parent = x->parent;
 		if (is_left_child(x))
 		{
-			if (x->parent != nullptr)
+			if (x->parent != NULL)
 				x->parent->left = y;
 		}
 		else
@@ -106,7 +106,7 @@ namespace ft
 			if (is_left_child(x->parent)) // se il genitore é un figlio sinistro
 			{
 				NodePtr y = x->parent->parent->right; // assegno a y lo zio destro di x
-				if (y != nullptr && !y->is_black)	//se lo zio destro esiste e é rosso
+				if (y != NULL && !y->is_black)	//se lo zio destro esiste e é rosso
 				{
 					x = x->parent;
 					x->is_black = true;	// il genitore diventa nero
@@ -132,7 +132,7 @@ namespace ft
 			else
 			{
 				NodePtr y = x->parent->parent->left;
-				if (y != nullptr && !y->is_black)
+				if (y != NULL && !y->is_black)
 				{
 					x = x->parent;
 					x->is_black = true;
@@ -164,16 +164,16 @@ namespace ft
 	{
 		//Z sará rimosso dall'albero. Y sará o Z, o se Z ha due figli, sará quello piú grande,
 		//Y avrá quindi massimo un figlio.
-		NodePtr y = (z->left == nullptr ||  z->right == nullptr || (z->right->is_end)) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
+		NodePtr y = (z->left == NULL ||  z->right == NULL || (z->right->is_end)) ? 			//se il nodo che stiamo togliendo non ha figli, y = nodo, altrimenti y = nodo piú grande
 						z : next_iter(z);
 		// x é forse il figlio null di y
-		NodePtr x = y->left != nullptr ? y->left : y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
-		if (x != nullptr && x->is_end)
-			x = nullptr;
+		NodePtr x = y->left != NULL ? y->left : y->right;				//se y ha figlio di sinistra, x diventa quello, se no diventa quello di destra
+		if (x != NULL && x->is_end)
+			x = NULL;
 		// w sará forse lo zio null di _x, che diventerá fratello di _x
-		NodePtr w = nullptr;
+		NodePtr w = NULL;
 		// _x prenderá il genitore di y, e trova w
-		if (x != nullptr)
+		if (x != NULL)
 			x->parent = y->parent;
 		if (is_left_child(y)) // se y é figlio di sinistra
 		{
@@ -182,7 +182,7 @@ namespace ft
 			if (y != root)		//se y non é root
 				w = y->parent->right;	//w diventa il fratello di y
 			else
-				root = x;  // w == nullptr
+				root = x;  // w == NULL
 		}
 		else	//se y é figlio di sinistra
 		{
@@ -195,7 +195,7 @@ namespace ft
 		//    but copy z's color.  This does not impact x or w.
 		if (y != z)
 		{
-			// z->left != nulptr but z->right might == x == nullptr
+			// z->left != nulptr but z->right might == x == NULL
 			y->parent = z->parent;
 			if (is_left_child(z))
 			{
@@ -209,13 +209,13 @@ namespace ft
 			y->left = z->left;
 			y->left->parent = y;
 			y->right = z->right;
-			if (y->right != nullptr)
+			if (y->right != NULL)
 				y->right->parent = y;
 			y->is_black = z->is_black;
 		}
 		// There is no need to rebalance if we removed a red, or if we removed
 		//     the last node.
-		if (removed_black && root != nullptr)
+		if (removed_black && root != NULL)
 		{
 			// Rebalance:
 			// x has an implicit black color (transferred from the removed y)
@@ -228,8 +228,8 @@ namespace ft
 			// Since y was black and only had one child (which x points to), x
 			//   is either red with no children, else null, otherwise y would have
 			//   different black heights under left and right pointers.
-			// if (x == root || x != nullptr && !x->is_black)
-			if (x != nullptr)
+			// if (x == root || x != NULL && !x->is_black)
+			if (x != NULL)
 				x->is_black = true;
 			else
 			{
@@ -255,7 +255,7 @@ namespace ft
 							w = w->left->right;
 						}
 						// w->is_black is now true, w may have null children
-						if ((w->left  == nullptr || w->left->is_black) && (w->right == nullptr || w->right->is_black))
+						if ((w->left  == NULL || w->left->is_black) && (w->right == NULL || w->right->is_black))
 						{
 							w->is_black = false;
 							x = w->parent;
@@ -273,7 +273,7 @@ namespace ft
 						}
 						else  // w has a red child
 						{
-							if (w->right == nullptr || w->right->is_black)
+							if (w->right == NULL || w->right->is_black)
 							{
 								// w left child is non-null and red
 								w->left->is_black = true;
@@ -306,8 +306,8 @@ namespace ft
 							w = w->right->left;
 						}
 						// w->is_black is now true, w may have null children
-						if ((w->left  == nullptr || w->left->is_black) &&
-							(w->right == nullptr || w->right->is_black))
+						if ((w->left  == NULL || w->left->is_black) &&
+							(w->right == NULL || w->right->is_black))
 						{
 							w->is_black = false;
 							x = w->parent;
@@ -325,7 +325,7 @@ namespace ft
 						}
 						else  // w has a red child
 						{
-							if (w->left == nullptr || w->left->is_black)
+							if (w->left == NULL || w->left->is_black)
 							{
 								// w right child is non-null and red
 								w->right->is_black = true;

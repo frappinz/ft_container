@@ -3,7 +3,7 @@
 
 #include <algorithm>
 namespace ft
-{
+{/*
 	template< bool B, class T = void >
 	struct enable_if{};
 
@@ -27,7 +27,7 @@ namespace ft
 	template <>          struct is_integral<long long>          : public std::true_type {};
 	template <>          struct is_integral<unsigned long long> : public std::true_type {};
 	template <>          struct is_integral<__int128_t>         : public std::true_type {};
-	template <>          struct is_integral<__uint128_t>        : public std::true_type {};
+	template <>          struct is_integral<__uint128_t>        : public std::true_type {};*/
 
 	template< class InputIt1, class InputIt2 >
 	bool lexicographical_compare( InputIt1 first1, InputIt1 last1, InputIt2 first2, InputIt2 last2 )
