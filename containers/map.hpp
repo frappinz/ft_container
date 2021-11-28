@@ -1,10 +1,9 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include <map>
 #include <memory>
 #include "iterator.hpp"
-#include "binary_tree.hpp"
+#include "../RB_tree/RB_tree.hpp"
 #include <functional>
 #include <utility>
 #include <iostream>
@@ -240,10 +239,6 @@ namespace ft
 
 	template <class Key, class T, class Compare, class Alloc>
 	void swap (map<Key,T,Compare,Alloc>& x, map<Key,T,Compare,Alloc>& y) { return x.swap(y); }
-
-
-	//TODO fare pair e sostituire gli std
-
 
 }
 
