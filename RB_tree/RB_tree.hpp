@@ -2,7 +2,6 @@
 
 #include <iostream>
 #include <memory>
-#include "containers/map.hpp"
 #include "tree_algorithm.hpp"
 #include "../utils.hpp"
 #include "tree_iterator.hpp"
@@ -12,7 +11,7 @@ namespace ft
 {
 
 
-	template <class _Tp, class _Compare, class _Allocator> class __tree;
+	template <class _Tp, class Iterator, class Const, class _Compare, class _Allocator> class __tree;
 	template <class _Tp> class tree_iterator;
 	template <class _Tp> class const_tree_iterator;
 	template <typename T> struct Node;
@@ -27,14 +26,14 @@ namespace ft
 		bool is_black;
 		bool is_end;
 		T pair;
-		Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false) {}
-		Node(T value) : left(nullptr), right(nullptr), parent(nullptr), is_black(true), is_end(false), pair(value) {}
+		Node() : left(nullptr), right(nullptr), parent(nullptr), is_black(false), is_end(false) {}
+		Node(T value) : left(nullptr), right(nullptr), parent(nullptr), is_black(false), is_end(false), pair(value) {}
 		~Node(){}
 	};
 
 							/******************************** CLASSE TREE ********************************/
 
-	template <class _Tp, class _Compare, class Allocator = std::allocator<Node<_Tp> > > //pair, compare, allocator<node<pair
+	template <class _Tp, class Iterator, class Const, class _Compare, class Allocator = std::allocator<Node<_Tp> > > //pair, compare, allocator<node<pair
 	class __tree
 	{
 	public:
@@ -42,17 +41,20 @@ namespace ft
 		typedef _Node*											nodeptr;
 		typedef _Tp                                     		value_type;
 		typedef _Compare                                 		value_compare;
+		typedef Iterator										iterator;
+		typedef Const											const_iterator;
 		typedef Allocator                               		allocator_type;
+		//typedef typename ft::const_tree_iterator<_Tp> 			const_iterator;
 		typedef typename allocator_type::pointer        		pointer;
 		typedef typename allocator_type::const_pointer   		const_pointer;
 		typedef typename allocator_type::size_type       		size_type;
 		typedef typename allocator_type::difference_type 		difference_type;
 		typedef typename allocator_type::reference				reference;
 		typedef typename allocator_type::const_reference		const_reference;
-		typedef ft::tree_iterator<_Tp>            				iterator;
-		typedef ft::const_tree_iterator<_Tp> 					const_iterator;
-		typedef ft::reverse_iterator<iterator>					reverse_iterator;
-		typedef ft::const_reverse_iterator<const_iterator>		const_reverse_iterator;
+		// typedef ft::tree_iterator<_Tp>            				iterator;
+		// typedef ft::set_iterator<_Tp> 							set_iterator;
+		// typedef ft::reverse_iterator<iterator>					reverse_iterator;
+		// typedef ft::const_reverse_iterator<const_iterator>		const_reverse_iterator;
 
 	private:
 		nodeptr				root;
@@ -296,6 +298,7 @@ namespace ft
 				nodeptr r = root;
 				_size++;
 				root->right = _end_node;
+				root->is_black = true;
 				_end_node->left = nullptr;
 				_end_node->right = nullptr;
 				_begin_node = root;
@@ -534,6 +537,25 @@ namespace ft
 			return _Pp(const_iterator(result), const_iterator(result));
 		}
 
+
+		void _print_tree()
+		{
+			iterator i = begin();
+			while (i != end())
+			{
+				if (i.base() != root)
+				{
+					if (i.base()->is_black)
+						std::cout << "\033[0;31m" << i.base()->pair << "\033[0;37m -> parent = " << i.base()->parent->pair << std::endl;
+					else
+						std::cout << i.base()->pair << " -> parent = " << i.base()->parent->pair << std::endl;
+				}
+				else
+					std::cout << "ROOT : " << i.base()->pair << std::endl;
+				i++;
+			}
+			std::cout << "\n\n\n";
+		}	
 
 	}; //classe tree
 

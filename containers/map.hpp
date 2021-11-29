@@ -2,13 +2,14 @@
 #define MAP_HPP
 
 #include <memory>
-#include "iterator.hpp"
+//#include "iterator.hpp"
 #include "../RB_tree/RB_tree.hpp"
+#include "../RB_tree/tree_iterator.hpp"
 #include <functional>
 #include <utility>
 #include <iostream>
 #include <string>
-#include "utils.hpp"
+#include "../utils.hpp"
 #include <exception>
 
 
@@ -39,32 +40,32 @@ namespace ft
 	class map
 	{
 		public:
-			typedef Key                                      	key_type;
-			typedef T                                        	mapped_type;
-			typedef pair<const key_type, mapped_type>   		value_type;
-			typedef Compare                                  	key_compare;
-			typedef Allocator                                	allocator_type;
-			typedef value_type&       							reference;
-			typedef const value_type&     						const_reference;
+			typedef Key                                      			key_type;
+			typedef T                                        			mapped_type;
+			typedef pair<const key_type, mapped_type>   				value_type;
+			typedef Compare                                  			key_compare;
+			typedef Allocator                                			allocator_type;
+			typedef value_type&       									reference;
+			typedef const value_type&     								const_reference;
+			typedef typename ft::tree_iterator<value_type>				iterator;
+			typedef typename ft::const_tree_iterator<value_type>		const_iterator;
+			typedef typename ft::reverse_iterator<iterator>				reverse_iterator;
+			typedef typename ft::const_reverse_iterator<const_iterator>	const_reverse_iterator;
 
 
 		private:
 			typedef _map_value_compare<key_type, value_type, key_compare> _vc;
-			typedef __tree<value_type, _vc>   	_base;
+			typedef __tree<value_type, iterator, const_iterator, _vc>   	_base;
 
 			allocator_type			alloc;
 			std::allocator<_base>	tree_alloc;
 			_base 					_tree;
 		public:
 			/****************** MEMBER TYPES ******************/
-			typedef typename allocator_type::pointer         	pointer;
-			typedef typename allocator_type::const_pointer   	const_pointer;
-			typedef typename allocator_type::size_type       	size_type;
-			typedef typename allocator_type::difference_type 	difference_type;
-			typedef typename _base::iterator					iterator;
-			typedef typename _base::const_iterator				const_iterator;
-			typedef typename _base::reverse_iterator			reverse_iterator;
-			typedef typename _base::const_reverse_iterator		const_reverse_iterator;
+			typedef typename allocator_type::pointer         		pointer;
+			typedef typename allocator_type::const_pointer   		const_pointer;
+			typedef typename allocator_type::size_type       		size_type;
+			typedef typename allocator_type::difference_type 		difference_type;
 
 		class value_compare : public std::binary_function<value_type, value_type, bool>
 		{
