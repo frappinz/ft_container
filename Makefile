@@ -18,7 +18,8 @@ NAME2			= containers2
 all:				$(NAME) $(NAME2)
 
 run:
-				./containers ./containers2
+				./containers 
+				./containers2
 
 diff:
 				diff mySTL.txt originalSTL.txt
@@ -30,12 +31,12 @@ $(NAME2):		$(OBJ2)
 				$(CC) $(CFLAGS) -o $(NAME2) $(OBJ2)
 
 clean:
-				$(RM) $(OBJ) $(OBJ_BONUS)
+				$(RM) $(OBJ) $(OBJ2) $(OBJ_BONUS)
 
 fclean:			clean
-				$(RM) $(NAME) $(NAME_BONUS)
+				$(RM) $(NAME) $(NAME2) $(NAME_BONUS) mySTL.txt originalSTL.txt
 
-re:				fclean $(NAME)
+re:				fclean $(NAME) $(NAME2)
 
 g:				fclean $(OBJS)
 				$(CC) -g -o $(NAME) ${SRCS} ${LIBS} 

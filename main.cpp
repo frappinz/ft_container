@@ -86,20 +86,131 @@ int main()
 		fileout << "[vec3] : " << *it1 << std::endl;
 
 
+	fileout << "\n\n************** TESTING STACK **************\n" << std::endl;
+	namespace::stack<int, namespace::vector<int> > stack1 (vec2);
+
+	fileout << "Printing content: \n";
+	fileout << "size : " << stack1.size() << std::endl;
+	while(stack1.size() != 0)
+	{
+		fileout << "[stack1] : " << stack1.top() << std::endl;
+		stack1.pop();
+	}
+	
+	fileout << "\n\n************** TESTING MAP **************\n" << std::endl;
+	namespace::map<int, std::string> map1;
+	map1.insert(namespace::pair<int, std::string>(1, "a"));
+	map1.insert(namespace::pair<int, std::string>(2, "b"));
+	map1.insert(namespace::pair<int, std::string>(3, "c"));
+	map1.insert(namespace::pair<int, std::string>(4, "d"));
+	map1.insert(namespace::pair<int, std::string>(5, "e"));
+	map1.insert(namespace::pair<int, std::string>(6, "f"));
+	map1.insert(namespace::pair<int, std::string>(7, "g"));
+	fileout << "Printing content: \n";
+	fileout << "size : " << map1.size() << std::endl;
+	fileout << "max_size : " << map1.max_size() << std::endl;
+	namespace::map<int, std::string>::iterator it;
+	for(it = map1.begin(); it != map1.end(); ++it)
+		fileout << "[map1] key = " << it->first << "  value = " << it->second << std::endl;
+	
+	fileout << "\n\n TESTING OPERATOR[] \n" << std::endl;
+	map1[6] = "changed";
+	map1[2] = "changed";
+	map1[10] = "added with operator[]";
+	for(it = map1.begin(); it != map1.end(); ++it)
+		fileout << "[map1] key = " << it->first << "  value = " << it->second << std::endl;
+
+
+	fileout << "\n\n TESTING COPY COSTRUCTOR \n" << std::endl;
+	namespace::map<int, std::string> map2(map1);
+	fileout << "Printing content: \n";
+	fileout << "size : " << map2.size() << std::endl;
+	fileout << "max_size : " << map2.max_size() << std::endl;
+	for(it = map2.begin(); it != map2.end(); ++it)
+		fileout << "[map2] key = " << it->first << "  value = " << it->second << std::endl;
+
+	fileout << "\n\n TESTING ERASE \n" << std::endl;
+	map1.erase(map1.begin(), ++(++(map1.begin())));
+	fileout << "Printing content: \n";
+	fileout << "size : " << map1.size() << std::endl;
+	fileout << "max_size : " << map1.max_size() << std::endl;
+	for(it = map1.begin(); it != map1.end(); ++it)
+		fileout << "[map1] key = " << it->first << "  value = " << it->second << std::endl;
+
+	fileout << "\n\n TESTING SWAP\n" << std::endl;
+	namespace::map<int, std::string> map3(map2);
+	map3.find(5)->second = "changed with find()";
+	map3.lower_bound(9)->second = "changed with lower_bound()";
+	map3.swap(map2);
+	fileout << "Printing content: \n";
+	it = map2.begin();
+	namespace::map<int, std::string>::iterator it2;
+	for(it = map2.begin(); it != map2.end(); ++it)
+		fileout << "[map2] key = " << it->first << "  value = " << it->second << std::endl;
+	fileout << std::endl;
+	for(it2 = map3.begin(); it2 != map3.end(); ++it2)	
+		fileout << "[map3] key = " << it2->first << "  value = " << it2->second << std::endl;
 
 	
 
+	fileout << "\n\n************** TESTING SET **************\n" << std::endl;
+	namespace::set<int> set1;
+	set1.insert(100);
+	set1.insert(200);
+	set1.insert(300);
+	set1.insert(400);
+	set1.insert(500);
+	set1.insert(600);
+	set1.insert(700);
+	fileout << "Printing content: \n";
+	fileout << "size : " << set1.size() << std::endl;
+	fileout << "max_size : " << set1.max_size() << std::endl;
+	namespace::set<int>::iterator ite;
+	for(ite = set1.begin(); ite != set1.end(); ++ite)
+		fileout << "[set1] = " << *ite << std::endl;
+
+
+	fileout << "\n\n TESTING COPY COSTRUCTOR \n" << std::endl;
+	namespace::set<int> set2(set1);
+	fileout << "Printing content: \n";
+	fileout << "size : " << set2.size() << std::endl;
+	fileout << "max_size : " << set2.max_size() << std::endl;
+	for(ite = set2.begin(); ite != set2.end(); ++ite)
+		fileout << "[set2] = " << *ite << std::endl;
+
+	fileout << "\n\n TESTING ERASE \n" << std::endl;
+	set1.erase(set1.begin(), ++(++(set1.begin())));
+	fileout << "Printing content: \n";
+	fileout << "size : " << set1.size() << std::endl;
+	fileout << "max_size : " << set1.max_size() << std::endl;
+	for(ite = set1.begin(); ite != set1.end(); ++ite)
+		fileout << "[set1] = " << *ite << std::endl;
+
+	fileout << "\n\n TESTING SWAP\n" << std::endl;
+	namespace::set<int> set3;
+	set3.insert(1);
+	set3.insert(2);
+	set3.insert(3);
+	set3.insert(4);
+	set3.insert(5);
+	set3.insert(6);
+	set3.insert(7);
+	set3.swap(set2);
+
+	fileout << "Printing content: \n";
+	fileout << "size : " << set2.size() << std::endl;
+	fileout << "max_size : " << set2.max_size() << std::endl;
+	for(ite = set2.begin(); ite != set2.end(); ++ite)
+		fileout << "[set2] = " << *ite << std::endl;
+	fileout << std::endl;
+	for(ite = set3.begin(); ite != set3.end(); ++ite)
+		fileout << "[set3] = " << *ite << std::endl;
+
+
+
+
 
 
 	
-
-
-	
-
-	
-
-
-
-
-
+ 	
 }
