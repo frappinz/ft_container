@@ -1,8 +1,8 @@
 #pragma once
 
 #include <set>
-#include "../RB_tree/RB_tree.hpp"
-#include "../RB_tree/tree_iterator.hpp"
+#include "RB_tree.hpp"
+#include "tree_iterator.hpp"
 namespace ft
 {
 	template<typename _Key, typename _Compare = std::less<_Key>, class Allocator = std::allocator<_Key> >

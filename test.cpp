@@ -1,15 +1,16 @@
-#include "map.hpp"
-#include "vector.hpp"
-#include "stack.hpp"
-#include "set.hpp"
+#include <map>
+#include <vector>
+#include <stack>
+#include <set>
+#include <iostream>
 #include <fstream>
 #include <sstream>
 
-#define namespace	ft
+#define namespace	std
 
 int main()
 {
-	std::ofstream fileout ("mySTL.txt");
+	std::ofstream fileout ("originalSTL.txt");
 	fileout << "************** TESTING VECTOR **************\n" << std::endl;
 
 	namespace::vector<int> vec1(5,100);
@@ -85,21 +86,6 @@ int main()
 	for(it1 = vec3.begin(); it1 != vec3.end(); ++it1)
 		fileout << "[vec3] : " << *it1 << std::endl;
 
-
-
-	
-
-
-
-	
-
-
-	
-
-	
-
-
-
-
-
 }
+
+	

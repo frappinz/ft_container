@@ -2,14 +2,13 @@
 #define MAP_HPP
 
 #include <memory>
-//#include "iterator.hpp"
-#include "../RB_tree/RB_tree.hpp"
-#include "../RB_tree/tree_iterator.hpp"
+#include "RB_tree.hpp"
+#include "tree_iterator.hpp"
 #include <functional>
 #include <utility>
 #include <iostream>
 #include <string>
-#include "../utils.hpp"
+#include "utils.hpp"
 #include <exception>
 
 

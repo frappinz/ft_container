@@ -3,7 +3,7 @@
 #include <iostream>
 #include <memory>
 #include "tree_algorithm.hpp"
-#include "../utils.hpp"
+#include "utils.hpp"
 #include "tree_iterator.hpp"
 
 
