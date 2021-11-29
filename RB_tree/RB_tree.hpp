@@ -18,7 +18,7 @@ namespace ft
 		
 							/******************************** STRUTTURA NODI ********************************/
 	
-	template <class T> //std::pair <T1, T2 
+	template <class T>
 	struct Node 
 	{
 		struct Node<T> *left, *right;
@@ -44,17 +44,12 @@ namespace ft
 		typedef Iterator										iterator;
 		typedef Const											const_iterator;
 		typedef Allocator                               		allocator_type;
-		//typedef typename ft::const_tree_iterator<_Tp> 			const_iterator;
 		typedef typename allocator_type::pointer        		pointer;
 		typedef typename allocator_type::const_pointer   		const_pointer;
 		typedef typename allocator_type::size_type       		size_type;
 		typedef typename allocator_type::difference_type 		difference_type;
 		typedef typename allocator_type::reference				reference;
 		typedef typename allocator_type::const_reference		const_reference;
-		// typedef ft::tree_iterator<_Tp>            				iterator;
-		// typedef ft::set_iterator<_Tp> 							set_iterator;
-		// typedef ft::reverse_iterator<iterator>					reverse_iterator;
-		// typedef ft::const_reverse_iterator<const_iterator>		const_reverse_iterator;
 
 	private:
 		nodeptr				root;

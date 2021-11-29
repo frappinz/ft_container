@@ -5,101 +5,14 @@
 #include <algorithm>
 #include <memory>
 #include <functional>
-#include <iostream>
 #include <limits>
-#include <memory>
-#include <string>
-#include <utility>
-#include <vector>
-#include <iterator>
-#include <functional>
-#include <iostream>
-#include <limits>
-#include <memory>
 #include <string>
 #include <utility>
 #include <stdexcept>
-#include "iterator.hpp"
+#include "../iterator.hpp"
 #include <cstring>
-#include <string.h>
-//#include <type_traits>
-#include "utils.hpp"
-  
-//ti amo non dovresti lavorare con me sei troppo brava lascia peppolone e scappiamo
+#include "../utils.hpp"
 
- /*.,,-~&,               ,~"~.
- { /`,__\`.             > ::::
-{ `}'~.~/\ \           <, ?::;
-{`}'\._/  ) }           l_  f
- ,__/ l_,'`/          ,__}--{_.
-{  `.__.' (          /         }
- \ \    )  )        /          !
-  \'\`-'`-'        /  ,    1  J;
-   \ \___l,-_,___.'  /1    !  Y
-    k____-~'-l_____.' |    l /
-   /===#=l            l     f
-  f      8            I===I=I
-  t    ! 8            f     }
-   Y    \l            |     }
-    \    \            l    Y;
-     `.   \           }    |
-      !`,  \          |    |
-      l /   }        ,1    |
-      l/   /         !l   ,l
-      /  ,'          ! \    \
-     /  /!           !  \    \
-    /_,f_l           l___j.   \
-   (_ \l_ `_     ,.-'`--(  `.,'`.
-    Y\__Y`--'    `-'~x__J    j'  >
-                           ,/ ,^'
-                          f__J
-						  
-						        ,;;;;;,
-       ,;;;;;;;;,
-       ;;;'____ ;
-       ;;;(\\\\\;
-       `/'((|||||
-    ___<  C))||||
-  ,'    \__(((||),
-  |    \  _)))))))\,_
- /|    |/"\`\`""""' |)
-;  \    \  ) \_____/_|
-|  |\    \'    _.,-' |
-|  ' \    \.,-'   _./ |
-(  _,-\      _.-''  |  ;
- "'|___\__.-'       ;  )
-    |----|   _.--,;'   ;
-   ,'  , | (     __.,-'
-   | ,' ,'  `""''   `.
-   |    ;            )
-   `,   (            )
-    |   (           ,'
-    |   |           (
-    |   |           |
-    |   |           |
-    |   |___________|
-    |   |      |    |
-	
-	         .,,,,,,,,,,.
-         ,;;;;;;;;;;;;;;,
-       ,;;;;;;;;;;;)));;(((,,;;;,,_
-      ,;;;;;;;;;;'      |)))))))))))\\
-      ;;;;;;/ )''    - /,)))((((((((((\
-      ;;;;' \        ~|\  ))))))))))))))
-      /     /         |   ((((((((((((((
-    /'      \      _/~'    ')|()))))))))
-  /'         `\   />     o_/)))((((((((
- /          /' `~~(____ /  ()))))))))))
-|     ---,   \        \     ((((((((((
-          `\   \~-_____|      ))))))))
-            `\  |      |_.---.  \
-
-           N
-          / \
-         |_.,| (_)(_)
-         | = |  |  |
-         `---^ -^--^-   
-*/
 namespace ft 
 {
   template < class T, class Allocator = std::allocator<T> > 

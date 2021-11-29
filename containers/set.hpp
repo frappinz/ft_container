@@ -39,7 +39,6 @@ namespace ft
 		:  tree(key_compare(comp), typename base::allocator_type(alloc))
 		{
 			insert(first, last);
-			//tree._print_tree();
 		}
 		~set(){}
 		set( const set& other ) : tree(other.tree){}
