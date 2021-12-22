@@ -142,7 +142,7 @@ int main()
 	fileout << "\n\n TESTING SWAP\n" << std::endl;
 	namespace::map<int, std::string> map3(map2);
 	map3.find(5)->second = "changed with find()";
-	map3.lower_bound(9)->second = "changed with lower_bound()";
+	map3.lower_bound(9)->second = "changed with lower()";
 	map3.swap(map2);
 	fileout << "Printing content: \n";
 	it = map2.begin();
